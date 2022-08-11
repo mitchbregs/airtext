@@ -1,2 +1,2 @@
 twilio
-flask
+boto3
