@@ -1,8 +1,7 @@
 import logging
 import os
-import subprocess
-import sys
-from typing import Dict, List
+from typing import Dict
+from urllib import parse
 
 import boto3
 from twilio.rest import Client
@@ -34,12 +33,14 @@ def main(event: Dict, context: Dict):
     -------
     None
     """
-
+    # Print for logging
     print(event)
 
     # Get relevant metadata
-    from_number = event["From"].replace("%2B", "")
-    proxy_number = event["To"].replace("%2B", "")
+    query_string = event["body"]
+    data = parse.parse_qs(qs=query_string)
+    from_number = data["From"][0].replace("+", "")
+    proxy_number = data["To"][0].replace("+", "")
     message_body = event["Body"]
 
     # Find client info from proxy number
