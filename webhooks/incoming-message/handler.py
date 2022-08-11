@@ -39,9 +39,10 @@ def main(event: Dict, context: Dict):
     # Get relevant metadata
     query_string = event["body"]
     data = parse.parse_qs(qs=query_string)
+
     from_number = data["From"][0].replace("+", "")
     proxy_number = data["To"][0].replace("+", "")
-    message_body = event["Body"]
+    message_body = data["Body"][0]
 
     # Find client info from proxy number
     dynamodb_client = boto3.client("dynamodb")
@@ -53,6 +54,8 @@ def main(event: Dict, context: Dict):
             },
         },
     )
+
+    # Get client phone number
     client_number = response["Item"]["phone_number"]["N"]
 
     # Perform Twilio logic
@@ -62,7 +65,7 @@ def main(event: Dict, context: Dict):
         message_body=message_body,
     )
     twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-    message = twilio_client.messages.create(
+    twilio_client.messages.create(
         to=client_number, 
         from_=proxy_number,
         body=new_message_body,
