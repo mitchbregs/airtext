@@ -1,10 +1,8 @@
 """Message AWS Lambda handler."""
 import logging
-import os
 from typing import Dict
 
-from sqlalchemy import create_engine
-# from airtext.handlers.message import MessageEvent, Incoming, Outgoing
+from airtext.handlers.message import MessageEvent, Incoming, Outgoing
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -21,23 +19,18 @@ def main(event: Dict, context: Dict) -> None:
         Provides methods and properties with information about the invocation.
         This argument is passed when Lambda runs any lambda_handler function.
     """
-    engine = create_engine(os.getenv("MESSAGES_DATABASE_URL"))
+    logger.info(event)
+    logger.info(context)
 
-    with engine.connect() as cnx:
-        res = cnx.execute("SELECT 1")
-        print(res.fetchall())
-    # logger.info(event)
-    # logger.info(context)
+    message_event = MessageEvent(event=event)
+    proxy = message_event.get_airtext_proxy()
 
-    # message_event = MessageEvent(event=event)
-    # proxy = message_event.get_airtext_proxy()
+    if proxy.member.number == message_event.from_number:
+        message = Outgoing(proxy=proxy)
+    else:
+        message = Incoming(proxy=proxy)
 
-    # if proxy.member.number == message_event.from_number:
-    #     message = Outgoing(proxy=proxy)
-    # else:
-    #     message = Incoming(proxy=proxy)
-
-    # message.handle()
+    message.handle()
 
 if __name__ == "__main__":
     MOCK_EVENT = {
