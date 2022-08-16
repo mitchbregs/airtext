@@ -21,7 +21,7 @@ MOCK_EVENT = {
         "From=%2B19996162014&"
         "ApiVersion=2010-04-01"
     )
-} # incoming
+}  # incoming
 
 MOCK_EVENT = {
     "body": (
@@ -46,6 +46,6 @@ MOCK_EVENT = {
         "From=%2B19066162014&"
         "ApiVersion=2010-04-01"
     )
-} # outgoing
+}  # outgoing
 
 MOCK_CONTEXT = {}

@@ -32,6 +32,7 @@ def main(event: Dict, context: Dict) -> None:
 
     message.handle()
 
+
 if __name__ == "__main__":
     MOCK_EVENT = {
         "body": (
@@ -53,14 +54,12 @@ if __name__ == "__main__":
             "ReferralNumMedia=0&"
             "MessageSid=SM6e0070f7f27433fd07982cbf770d4834&"
             "AccountSid=AC30eea2e61a63d9a79888bb17f6a1f0ce&"
-            "From=%2B19086162014&"
+            "From=%2B19086162013&"
             "ApiVersion=2010-04-01"
         )
     }
-    MOCK_EVENT= {'body': 'ToCountry=US&ToState=NJ&SmsMessageSid=SM24d571986502daa55c99e7f507c70160&NumMedia=0&ToCity=FAIRFIELD&FromZip=08817&SmsSid=SM24d571986502daa55c99e7f507c70160&FromState=NJ&SmsStatus=received&FromCity=NEW+BRUNSWICK&Body=ADD+%2B19732835169+%40burner&FromCountry=US&To=%2B19738745273&ToZip=07004&NumSegments=1&ReferralNumMedia=0&MessageSid=SM24d571986502daa55c99e7f507c70160&AccountSid=AC30eea2e61a63d9a79888bb17f6a1f0ce&From=%2B19086162014&ApiVersion=2010-04-01'}
-
-
-
-
+    # MOCK_EVENT = {
+    #     "body": "ToCountry=US&ToState=NJ&SmsMessageSid=SM87a3c2404ee024723075372ada9d7a31&NumMedia=0&ToCity=FAIRFIELD&FromZip=08817&SmsSid=SM87a3c2404ee024723075372ada9d7a31&FromState=NJ&SmsStatus=received&FromCity=NEW+BRUNSWICK&Body=Test&FromCountry=US&To=%2B19738745273&ToZip=07004&NumSegments=1&ReferralNumMedia=0&MessageSid=SM87a3c2404ee024723075372ada9d7a31&AccountSid=AC30eea2e61a63d9a79888bb17f6a1f0ce&From=%2B19086162014&ApiVersion=2010-04-01"
+    # }
     MOCK_CONTEXT = {}
     main(MOCK_EVENT, MOCK_CONTEXT)

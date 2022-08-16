@@ -99,14 +99,14 @@ class AirtextParser:
             "We could not find a name for your contact. 👤\n\n"
             "If you are trying to update a contact, make sure to include their name. "
             "For example, UPDATE +19876543210 @JaneDoe."
-        )
+        ),
     }
 
     def __init__(self, text: str):
         self.text = text
         self.error = False
         self.error_message = None
-    
+
     def parse(self):
         body = self.get_body()
         name = self.get_name()
@@ -132,11 +132,11 @@ class AirtextParser:
             return None
 
         command = search.group()
-        
+
         if not command in self.COMMANDS:
             self.error = True
             self.error_message = self.ERROR_MESSAGES["invalid-command"]
-            return None        
+            return None
 
         return command
 
@@ -158,7 +158,7 @@ class AirtextParser:
             number = f"+{number}"
 
         # TODO: We should make sure we are handling other cases...q
-        
+
         return number
 
     def get_name(self):
@@ -172,7 +172,6 @@ class AirtextParser:
         name = search.group()
 
         return name
-    
 
     def get_body(self):
         pattern = re.compile(self.REGEX_COMMANDS["body"])
@@ -181,7 +180,7 @@ class AirtextParser:
         if not search:
             self.error_message = self.ERROR_MESSAGES["body-not-found"]
             return None
-        
+
         body = search.group()
 
         return body

@@ -11,6 +11,7 @@ class AirtextProxy:
         self.text = text
 
         self.member = self.get_member()
+        self.contact = self.get_contact()
 
     @property
     def api(self) -> AirtextAPI:
@@ -22,11 +23,16 @@ class AirtextProxy:
     def get_member(self):
         return self.api.members.get_by_proxy_number(proxy_number=self.proxy_number)
 
-    def send_message(self, to: str, body: str):
+    def get_contact(self):
+        return self.api.contacts.get_by_number_and_member_id(
+            number=self.from_number, member_id=self.member.id
+        )
+
+    def send(self, to: str, body: str):
         client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
         client.messages.create(
             to=to,
-            from_=self.proxy_number,
+            from_=self.member.proxy_number,
             body=body,
         )
 
