@@ -37,6 +37,26 @@ PICK OUT: Command [ADD, GET, DELETE, UPDATE, TO, COMMANDS]
 import re
 from dataclasses import dataclass
 
+COMMAND_REGEX = r"^(ADD|GET|DELETE|UPDATE|TO|COMMANDS)"
+command=re.search(COMMAND_REGEX, text, flags=re.IGNORECASE)
+if command:
+    print(command.group())
+
+# alternative/ better way
+pattern=re.compile(COMMAND_REGEX)
+result = pattern.search(text)
+# access group after
+
+text = "1-718-444-1122"
+PHONE_REGEX = r"^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$"
+phone=re.search(PHONE_REGEX, text)
+phone = phone.group()
+clean_phone = re.sub(r"[^\w]", "", phone)
+
+NAME_REGEX=r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
+HASTAG_REGEX=r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
+NEWLINE_REGEX=r"(?<=\n).*"
+
 
 @dataclass
 class AirtextParserData:
