@@ -1,9 +1,9 @@
+#!/bin/bash
 python3 -m venv .venv
-source .venv/bin/activate
+. .venv/bin/activate
 pip install awscli
 aws codeartifact login --tool twine --repository airtext-pypi-store --domain airtext-pypi --domain-owner 312590578399
-pip install -e .
-pip install -e '.[dev,pkg]'
+pip install -e '.[pkg]'
 python -m build --sdist --wheel --outdir dist/ .
 twine upload --verbose -r codeartifact dist/*
 # export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain airtext-pypi --domain-owner 312590578399 --query authorizationToken --output text`

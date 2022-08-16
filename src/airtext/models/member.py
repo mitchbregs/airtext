@@ -17,6 +17,7 @@ class Member(Base):
 
 
 class AirtextMembers(DatabaseMixin):
+
     def get_by_proxy_number(self, proxy_number: str):
         with self.session() as session:
             return session.query(Member).filter_by(proxy_number=proxy_number).one()

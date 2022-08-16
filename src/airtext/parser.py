@@ -37,26 +37,6 @@ PICK OUT: Command [ADD, GET, DELETE, UPDATE, TO, COMMANDS]
 import re
 from dataclasses import dataclass
 
-COMMAND_REGEX = r"^(ADD|GET|DELETE|UPDATE|TO|COMMANDS)"
-command=re.search(COMMAND_REGEX, text, flags=re.IGNORECASE)
-if command:
-    print(command.group())
-
-# alternative/ better way
-pattern=re.compile(COMMAND_REGEX)
-result = pattern.search(text)
-# access group after
-
-text = "1-718-444-1122"
-PHONE_REGEX = r"^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$"
-phone=re.search(PHONE_REGEX, text)
-phone = phone.group()
-clean_phone = re.sub(r"[^\w]", "", phone)
-
-NAME_REGEX=r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
-HASTAG_REGEX=r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
-NEWLINE_REGEX=r"(?<=\n).*"
-
 
 @dataclass
 class AirtextParserData:
@@ -79,9 +59,47 @@ class AirtextParser:
         "TO",
     }
 
+    REGEX_COMMANDS = {
+        "command": r"^(ADD|GET|DELETE|UPDATE|TO|COMMANDS)",
+        "number": r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}",
+        "name": r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)",
+        "body": r"(?<=\n)(.*)$",
+    }
+
     ERROR_MESSAGES = {
-        "command-not-found": "The command you provided does not exist.",
-        "number-not-found": "The phone number you provided is not properly formatted.",
+        "invalid-command": (
+            "You either did not provide a command 🤔, or the command you "
+            "provided is invalid. 🙅\n\n"
+            "The accepted commands are as follows:\n"
+            "❓ COMMANDS\n"
+            "📲 TO\n"
+            "📗 ADD\n"
+            "🔎 GET\n"
+            "🗑 DELETE\n"
+            "📝 UPDATE\n"
+        ),
+        "number-not-found": (
+            "The phone number you provided either does not exist or "
+            "is not properly formatted. 📵\n\n"
+            "Examples of valid phone number formats:\n"
+            "⚪️ +19876543210\n"
+            "🔴 19876543210\n"
+            "🟠 9876543210\n"
+            "🟡 +1 (987) 654-3210\n"
+            "🟢 1 (987) 654-3210\n"
+            "🔵 (987) 654-3210\n"
+            "🟣 987.654.3210\n"
+            "⚫️ 1.987.654.3210\n"
+        ),
+        "body-not-found": (
+            "We could not find any text or content to send. 🖇\n\n"
+            "If you are sending a message to a contact, make sure to include a body of text or something!"
+        ),
+        "name-not-found": (
+            "We could not find a name for your contact. 👤\n\n"
+            "If you are trying to update a contact, make sure to include their name. "
+            "For example, UPDATE +19876543210 @JaneDoe."
+        )
     }
 
     def __init__(self, text: str):
@@ -90,63 +108,80 @@ class AirtextParser:
         self.error_message = None
     
     def parse(self):
-        command = self.get_command()
-        number = self.get_number()
-        name = self.get_name()
         body = self.get_body()
-        error = self.error
-        error_message = self.error_message
+        name = self.get_name()
+        number = self.get_number()
+        command = self.get_command()
 
         return AirtextParserData(
             command=command,
             number=number,
             name=name,
             body=body,
-            error=error,
-            error_message=error_message,
+            error=self.error,
+            error_message=self.error_message,
         )
-    
-    @property
-    def arguments(self):
-        try:
-            return self.text.strip().split(" ", 1)[1].strip().upper()
-        except IndexError:
-            return []
 
     def get_command(self):
-        command = self.text.strip().split(" ", 1)[0].strip().upper()
+        pattern = re.compile(self.REGEX_COMMANDS["command"])
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error = True
+            self.error_message = self.ERROR_MESSAGES["invalid-command"]
+            return None
+
+        command = search.group()
         
         if not command in self.COMMANDS:
             self.error = True
-            self.error_message = self.ERROR_MESSAGES["command-not-found"]
+            self.error_message = self.ERROR_MESSAGES["invalid-command"]
             return None        
 
         return command
 
     def get_number(self):
+        pattern = re.compile(self.REGEX_COMMANDS["number"])
+        search = pattern.search(self.text)
 
-        # wo_symbols = re.sub(r"[^\w]", " ", self.arguments.splt)
-
-        # try:
-        #     search_number = wo_symbols # DO SOMETHING
-        # except Exception:
-        #     return 
-        # number = f"+1{search_number}"
-        # return number
-
-        fail = True
-        if fail:
+        if not search:
             self.error = True
             self.error_message = self.ERROR_MESSAGES["number-not-found"]
             return None
 
-        return "+17326752499"
+        number = search.group()
+        number = re.sub(r"[^\w]", "", number)
+
+        if len(number) == 10:
+            number = f"+1{number}"
+        if len(number) == 11:
+            number = f"+{number}"
+
+        # TODO: We should make sure we are handling other cases...q
+        
+        return number
 
     def get_name(self):
-        if len(self.arguments) > 1:
-            return self.arguments.split(" ")[1].strip()
-        else:
+        pattern = re.compile(self.REGEX_COMMANDS["name"])
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error_message = self.ERROR_MESSAGES["name-not-found"]
             return None
 
+        name = search.group()
+
+        return name
+    
+
     def get_body(self):
-        return self.text.split("\n", 1)[-1]
+        pattern = re.compile(self.REGEX_COMMANDS["body"])
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error_message = self.ERROR_MESSAGES["body-not-found"]
+            return None
+        
+        body = search.group()
+
+        return body

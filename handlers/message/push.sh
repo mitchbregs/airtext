@@ -1,5 +1,6 @@
-python -m venv .venv
-source .venv/bin/activate
+#!/bin/bash
+python3 -m venv .venv
+. .venv/bin/activate
 pip install awscli
 export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain airtext-pypi --domain-owner 312590578399 --query authorizationToken --output text`
 export PIP_INDEX_URL=https://aws:$CODEARTIFACT_AUTH_TOKEN@airtext-pypi-312590578399.d.codeartifact.us-east-1.amazonaws.com/pypi/airtext-pypi-store/simple/

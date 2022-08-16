@@ -5,3 +5,4 @@ venv/
 dist/
 build/
 *.pem
+__pycache__/
