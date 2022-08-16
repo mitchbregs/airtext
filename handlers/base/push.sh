@@ -7,4 +7,5 @@ aws ecr get-login-password --region us-east-1 | docker login --username AWS --pa
 docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-messages .
 docker tag dev-airtext-messages:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-messages:latest
 docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-messages:latest
-aws lambda update-function-code --function-name dev-airtext-messages-router --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-messages:latest
+aws lambda update-function-code --function-name dev-airtext-messages-router 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-messages:latest
+# TODO: aws update lambda
