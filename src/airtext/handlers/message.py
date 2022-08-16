@@ -38,7 +38,7 @@ class Message(ABC):
 
 class Incoming(Message):
 
-    INCOMING_MESSAGE_TEMPLATE = "FROM {number}\n\n{text}"
+    INCOMING_MESSAGE_TEMPLATE = "FROM {number} @{name}\n\n{text}"
 
     def __init__(self, proxy: AirtextProxy):
         super().__init__(proxy=proxy)
@@ -62,6 +62,7 @@ class Outgoing(Message):
     COMMANDS_TEMPLATE = PRE + "This will eventually be a rule book..."
     ADD_CONTACT_TEMPLATE = PRE + "Successfully added new contact:\n\n{number} @{name}"
     DELETE_CONTACT_TEMPLATE = PRE + "Deleted contact:\n\n{number}"
+    UPDATE_CONTACT_TEMPLATE = PRE + "Updated contact:\n\n{number} @{name}"
 
     def __init__(self, proxy: AirtextProxy):
         super().__init__(proxy=proxy)
@@ -137,6 +138,14 @@ class Outgoing(Message):
                 number=message_data.number,
                 name=message_data.name,
                 member_id=self.proxy.member.id,
+            )
+
+            self.proxy.send_message(
+                to=self.proxy.member.number,
+                body=self.UPDATE_CONTACT_TEMPLATE.format(
+                    number=message_data.number,
+                    name=message_data.name,
+                )
             )
 
             return

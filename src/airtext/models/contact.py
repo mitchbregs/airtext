@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, text
+from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP, VARCHAR
 
 from airtext.models.mixin import DatabaseMixin, Base
@@ -14,6 +14,9 @@ class Contact(Base):
     member_id = Column(INTEGER, ForeignKey("members.id"))
     created_on = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
 
+    __table_args__ = (
+        UniqueConstraint('number', 'member_id'),
+    )
 
 class AirtextContacts(DatabaseMixin):
 
