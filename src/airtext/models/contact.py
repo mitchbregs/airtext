@@ -17,7 +17,7 @@ class Contact(Base):
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
 
-    __table_args__ = (UniqueConstraint("name", "number", "member_id"),)
+    __table_args__ = (UniqueConstraint("number", "member_id"),)
 
 
 class AirtextContacts(DatabaseMixin):

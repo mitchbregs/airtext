@@ -10,15 +10,13 @@ class AirtextProxy:
         self.from_number = from_number
         self.text = text
 
+        self.api = AirtextAPI()
+
         self.member = self.get_member()
 
     @property
     def contact(self):
         return self.get_contact()
-
-    @property
-    def api(self) -> AirtextAPI:
-        return AirtextAPI()
 
     def __repr__(self):
         return f"<AirtextProxy proxy_number={self.proxy_number}>"
