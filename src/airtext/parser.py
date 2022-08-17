@@ -48,6 +48,13 @@ class AirtextParserData:
     error_message: str
 
 
+class AirtextParserError:
+    COMMAND_NOT_FOUND: str = "command-not-found"
+    NUMBER_NOT_FOUND: str = "number-not-found"
+    NAME_NOT_FOUND: str = "name-not-found"
+    BODY_NOT_FOUND: str = "body-not-found"
+
+
 class AirtextParser:
 
     COMMANDS = {
@@ -66,48 +73,14 @@ class AirtextParser:
         "body": r"(?<=\n)(.*)$",
     }
 
-    ERROR_MESSAGES = {
-        "invalid-command": (
-            "You either did not provide a command 🤔, or the command you "
-            "provided is invalid. 🙅\n\n"
-            "The accepted commands are as follows:\n"
-            "❓ COMMANDS\n"
-            "📲 TO\n"
-            "📗 ADD\n"
-            "🔎 GET\n"
-            "🗑 DELETE\n"
-            "📝 UPDATE\n"
-        ),
-        "number-not-found": (
-            "The phone number you provided either does not exist or "
-            "is not properly formatted. 📵\n\n"
-            "Examples of valid phone number formats:\n"
-            "⚪️ +19876543210\n"
-            "🔴 19876543210\n"
-            "🟠 9876543210\n"
-            "🟡 +1 (987) 654-3210\n"
-            "🟢 1 (987) 654-3210\n"
-            "🔵 (987) 654-3210\n"
-            "🟣 987.654.3210\n"
-            "⚫️ 1.987.654.3210\n"
-        ),
-        "body-not-found": (
-            "We could not find any text or content to send. 🖇\n\n"
-            "If you are sending a message to a contact, make sure to include a body of text or something!"
-        ),
-        "name-not-found": (
-            "We could not find a name for your contact. 👤\n\n"
-            "If you are trying to update a contact, make sure to include their name. "
-            "For example, UPDATE +19876543210 @JaneDoe."
-        ),
-    }
-
     def __init__(self, text: str):
         self.text = text
         self.error = False
         self.error_message = None
 
     def parse(self):
+
+        # Reverse order of significance
         body = self.get_body()
         name = self.get_name()
         number = self.get_number()
@@ -123,30 +96,33 @@ class AirtextParser:
         )
 
     def get_command(self):
+        """Search for the command."""
+        # TODO: Make case insensitive
         pattern = re.compile(self.REGEX_COMMANDS["command"])
         search = pattern.search(self.text)
 
         if not search:
             self.error = True
-            self.error_message = self.ERROR_MESSAGES["invalid-command"]
+            self.error_message = AirtextParserError.COMMAND_NOT_FOUND
             return None
 
         command = search.group()
 
-        if not command in self.COMMANDS:
-            self.error = True
-            self.error_message = self.ERROR_MESSAGES["invalid-command"]
-            return None
-
         return command
 
     def get_number(self):
+        """Search for number.
+
+        - If not exists, return error code.
+        - If exists, remove all symbols
+        -- If length checks, format for insert and insert.
+        """
         pattern = re.compile(self.REGEX_COMMANDS["number"])
         search = pattern.search(self.text)
 
         if not search:
             self.error = True
-            self.error_message = self.ERROR_MESSAGES["number-not-found"]
+            self.error_message = AirtextParserError.NUMBER_NOT_FOUND
             return None
 
         number = search.group()
@@ -154,10 +130,14 @@ class AirtextParser:
 
         if len(number) == 10:
             number = f"+1{number}"
-        if len(number) == 11:
+        elif len(number) == 11:
             number = f"+{number}"
+        else:
+            self.error = True
+            self.error_message = AirtextParserError.NUMBER_NOT_FOUND
+            return
 
-        # TODO: We should make sure we are handling other cases...q
+        # TODO: We should make sure we are handling other cases...
 
         return number
 
@@ -166,7 +146,7 @@ class AirtextParser:
         search = pattern.search(self.text)
 
         if not search:
-            self.error_message = self.ERROR_MESSAGES["name-not-found"]
+            self.error_message = AirtextParserError.NAME_NOT_FOUND
             return None
 
         name = search.group()
@@ -178,7 +158,7 @@ class AirtextParser:
         search = pattern.search(self.text)
 
         if not search:
-            self.error_message = self.ERROR_MESSAGES["body-not-found"]
+            self.error_message = AirtextParserError.BODY_NOT_FOUND
             return None
 
         body = search.group()

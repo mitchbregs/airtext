@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP, VARCHAR
+from sqlalchemy.exc import IntegrityError
 
 from airtext.models.mixin import DatabaseMixin, Base
 
@@ -28,47 +29,12 @@ class AirtextContacts(DatabaseMixin):
                 member_id=member_id,
             )
             session.add(contact)
-            session.commit()
+            try:
+                session.commit()
+            except IntegrityError:
+                return False
 
         return True
-
-    def delete_contact(self, number: str, member_id: int):
-        with self.session() as session:
-            contact = (
-                session.query(Contact)
-                .filter_by(
-                    number=number,
-                    member_id=member_id,
-                )
-                .first()
-            )
-
-            if contact:
-                session.delete(contact)
-                session.commit()
-
-                return True
-
-        return False
-
-    def update_contact(self, number: str, name: str, member_id: int):
-        with self.session() as session:
-            contact = (
-                session.query(Contact)
-                .filter_by(
-                    number=number,
-                    member_id=member_id,
-                )
-                .first()
-            )
-
-            if contact:
-                contact.update(name=name)
-                session.commit()
-
-                return True
-
-        return False
 
     def get_by_proxy_number(self, proxy_number: str):
         with self.session() as session:
@@ -95,3 +61,41 @@ class AirtextContacts(DatabaseMixin):
                 )
                 .first()
             )
+
+    def update_contact(self, number: str, name: str, member_id: int):
+        with self.session() as session:
+            contact = (
+                session.query(Contact)
+                .filter_by(
+                    number=number,
+                    member_id=member_id,
+                )
+                .first()
+            )
+
+            if contact:
+                contact.name = name
+                session.commit()
+
+                return True
+
+        return False
+
+    def delete_contact(self, number: str, member_id: int):
+        with self.session() as session:
+            contact = (
+                session.query(Contact)
+                .filter_by(
+                    number=number,
+                    member_id=member_id,
+                )
+                .first()
+            )
+
+            if contact:
+                session.delete(contact)
+                session.commit()
+
+                return True
+
+        return False

@@ -11,7 +11,10 @@ class AirtextProxy:
         self.text = text
 
         self.member = self.get_member()
-        self.contact = self.get_contact()
+
+    @property
+    def contact(self):
+        return self.get_contact()
 
     @property
     def api(self) -> AirtextAPI:
