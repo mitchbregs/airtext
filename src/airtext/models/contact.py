@@ -1,3 +1,5 @@
+from sqlalchemy.exc import IntegrityError
+
 from airtext.models.base import Contact
 from airtext.models.mixin import ExternalConnectionsMixin
 
