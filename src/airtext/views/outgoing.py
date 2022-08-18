@@ -95,6 +95,8 @@ class Outgoing(View):
                 member_id=self.member.id,
             )
 
+        name = contact.name if contact else None
+
         if contact:
             self.api.messages.create(
                 proxy_number=self.member.proxy_number,
@@ -102,7 +104,7 @@ class Outgoing(View):
                 member_id=self.member.id,
                 command=self.text.command,
                 number=self.text.number,
-                name=self.text.name,
+                name=contact.name,
                 body=OutgoingResponse.GET_CONTACT.format(
                     number=self.text.number,
                     name=self.text.name,
