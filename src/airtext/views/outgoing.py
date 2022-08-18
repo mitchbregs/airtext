@@ -12,13 +12,14 @@ class Outgoing(View):
         self.text = text
         self.api = AirtextAPI()
 
-    def _run_airtext_command(self, **kwargs):
+    def _run_airtext_command(self):
         self.api.messages.create(
-            proxy_number=member.proxy_number,
-            from_number=member.number,
-            member_id=member.id,
+            proxy_number=self.member.proxy_number,
+            from_number=self.member.number,
+            member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
+            name=self.text.name,
             body=self.text.body,
             error=self.text.error,
             error_code=self.text.error_code,
@@ -26,15 +27,16 @@ class Outgoing(View):
 
         return
 
-    def _run_to_command(self, **kwargs):
+    def _run_to_command(self):
 
         self.api.messages.create(
-            proxy_number=member.proxy_number,
-            from_number=from_number,
-            member_id=member.id,
+            proxy_number=self.member.proxy_number,
+            from_number=self.member.number,
+            member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
-            body=OutgoingResponse.format(self.text.text),
+            name=self.text.name,
+            body=self.text.body,
             error=self.text.error,
             error_code=self.text.error_code,
         )
@@ -73,7 +75,9 @@ class Outgoing(View):
             command=self.text.command,
             number=self.text.number,
             name=self.text.name,
-            body=OutgoingResponse.ADD_CONTACT_FAIL.format(number=self.text.number),
+            body=OutgoingResponse.ADD_CONTACT_FAIL.format(
+                number=self.text.number, name=self.text.name
+            ),
             error=self.text.error,
             error_code=self.text.error_code,
         )
@@ -127,7 +131,7 @@ class Outgoing(View):
 
         return
 
-    def _run_update_command(self, **kwargs):
+    def _run_update_command(self):
         is_updated = self.api.contacts.update_contact(
             number=self.text.number,
             name=self.text.name,
@@ -169,7 +173,7 @@ class Outgoing(View):
 
         return
 
-    def _run_delete_command(self, **kwargs):
+    def _run_delete_command(self):
         is_deleted = self.api.contacts.delete_contact(
             number=self.text.number,
             member_id=self.member.id,
@@ -202,6 +206,7 @@ class Outgoing(View):
             name=self.text.name,
             body=OutgoingResponse.DELETE_CONTACT_FAIL.format(
                 number=self.text.number,
+                name=self.text.name,
             ),
             error=self.text.error,
             error_code=self.text.error_code,

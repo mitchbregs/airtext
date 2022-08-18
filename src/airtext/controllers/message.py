@@ -14,13 +14,18 @@ class MessageController(Controller):
         member = self.api.members.get_by_proxy_number(
             proxy_number=self.request.to_number
         )
-        text = self.api.messages.parse_text(text=self.request.text)
 
         if self.request.from_number == member.number:
+            text = self.api.messages.parse_text(
+                text=self.request.text, is_incoming=False
+            )
             message = Outgoing(member=member, text=text)
         else:
+            text = self.api.messages.parse_text(
+                text=self.request.text, is_incoming=True
+            )
             message = Incoming(
-                member=member, from_number=request.from_number, text=text
+                member=member, from_number=self.request.from_number, text=text
             )
 
         message.send()

@@ -63,4 +63,9 @@ class OutgoingResponse(object):
         "If you are sending a message to a contact, make sure to include a body of text or something!"
     )
 
-    ERROR_MESSAGES = {"number-not-found": NUMBER_NOT_FOUND}
+    ERROR_MESSAGES = {
+        "command-not-found": COMMAND_NOT_FOUND,
+        "number-not-found": NUMBER_NOT_FOUND,
+        "name-not-found": NAME_NOT_FOUND,
+        "body-not-found": BODY_NOT_FOUND,
+    }

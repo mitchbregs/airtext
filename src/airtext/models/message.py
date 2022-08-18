@@ -55,16 +55,16 @@ class MessageAPI(ExternalConnectionsMixin):
             session.commit()
 
         self.twilio.messages.create(
-            to=from_number,
+            to=number,
             from_=proxy_number,
             body=body,
         )
 
         return True
 
-    def parse_text(self, text: str):
+    def parse_text(self, text: str, is_incoming: bool = False):
         parser = TextParser(text=text)
-        text = parser.parse()
+        text = parser.parse(is_incoming=is_incoming)
         return text
 
 
@@ -90,7 +90,7 @@ class TextRegexCommands:
     NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
     # GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
-    BODY = r"(?<=\n)(.*)$"
+    BODY = r"(?<=\n)(.*)"
 
 
 class TextParser:
@@ -99,12 +99,14 @@ class TextParser:
         self.error = False
         self.error_code = None
 
-    def parse(self):
-        # Reverse order of significance
-        body = self.get_body()
-        name = self.get_name()
-        number = self.get_number()
+    def parse(self, is_incoming: bool):
         command = self.get_command()
+        number = self.get_number()
+        name = self.get_name()
+        if is_incoming:
+            body = self.get_incoming_body()
+        else:
+            body = self.get_outgoing_body()
 
         return TextParserData(
             command=command,
@@ -172,7 +174,12 @@ class TextParser:
 
         return name
 
-    def get_body(self):
+    def get_incoming_body(self):
+        self.error = False
+        self.error_code = None
+        return self.text
+
+    def get_outgoing_body(self):
         pattern = re.compile(TextRegexCommands.BODY)
         search = pattern.search(self.text)
 

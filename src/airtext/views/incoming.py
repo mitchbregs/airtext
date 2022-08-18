@@ -21,12 +21,15 @@ class Incoming(View):
         name = contact.name if contact else None
 
         self.api.messages.create(
-            proxy_number=member.proxy_number,
+            proxy_number=self.member.proxy_number,
             from_number=self.from_number,
-            member_id=member.id,
+            member_id=self.member.id,
             command=None,
-            number=None,
-            body=IncomingResponse.format(number=self.from_number, name=name),
+            number=self.member.number,
+            name=self.member.name,
+            body=IncomingResponse.ALL.format(
+                number=self.from_number, name=name, text=self.text.body
+            ),
             error=None,
-            error_message=None,
+            error_code=None,
         )

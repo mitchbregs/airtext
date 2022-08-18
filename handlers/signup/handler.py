@@ -45,6 +45,8 @@ if __name__ == "__main__":
     # ASK
     # MOCK_EVENT = {'body': 'ToCountry=US&ToState=NJ&SmsMessageSid=SM8f78485858368192fd6f74bcba7bae56&NumMedia=0&ToCity=FAIRFIELD&FromZip=08817&SmsSid=SM8f78485858368192fd6f74bcba7bae56&FromState=NJ&SmsStatus=received&FromCity=NEW+BRUNSWICK&Body=COMMANDS+%2B1+%28908%29+565-1367&FromCountry=US&To=%2B19738745273&ToZip=07004&NumSegments=1&ReferralNumMedia=0&MessageSid=SM8f78485858368192fd6f74bcba7bae56&AccountSid=AC30eea2e61a63d9a79888bb17f6a1f0ce&From=%2B19086162014&ApiVersion=2010-04-01'}
 
+    # TO:
+
     MOCK_CONTEXT = {}
 
     main(MOCK_EVENT, MOCK_CONTEXT)
