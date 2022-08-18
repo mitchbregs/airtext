@@ -100,7 +100,7 @@ class Outgoing(View):
                 name=contact.name,
                 body=OutgoingResponse.GET_CONTACT.format(
                     number=self.text.number,
-                    name=self.text.name,
+                    name=contact.name,
                 ),
                 error=self.text.error,
                 error_code=self.text.error_code,
@@ -188,7 +188,7 @@ class Outgoing(View):
                 name=contact.name,
                 body=OutgoingResponse.DELETE_CONTACT.format(
                     number=self.text.number,
-                    name=self.text.name,
+                    name=contact.name,
                 ),
                 error=self.text.error,
                 error_code=self.text.error_code,
