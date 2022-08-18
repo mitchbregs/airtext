@@ -1,11 +1,14 @@
 from .mixin import Base
-from .contact import Contact
-from .member import Member
-from .message import Message
+from .contact import Contact, ContactAPI
+from .member import Member, MemberAPI
+from .message import Message, MessageAPI
 
 __all__ = [
     "Base",
     "Contact",
+    "ContactAPI",
     "Member",
+    "MemberAPI",
     "Message",
+    "MessageAPI",
 ]

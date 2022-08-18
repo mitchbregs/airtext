@@ -2,7 +2,7 @@ from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP, VARCHAR
 from sqlalchemy.exc import IntegrityError
 
-from airtext.models.mixin import DatabaseMixin, Base
+from airtext.models.mixin import ExternalConnectionsMixin, Base
 
 
 class Contact(Base):
@@ -20,9 +20,9 @@ class Contact(Base):
     __table_args__ = (UniqueConstraint("number", "member_id"),)
 
 
-class AirtextContacts(DatabaseMixin):
+class ContactAPI(ExternalConnectionsMixin):
     def add_contact(self, name: str, number: str, member_id: int):
-        with self.session() as session:
+        with self.database() as session:
             contact = Contact(
                 name=name,
                 number=number,
@@ -37,11 +37,11 @@ class AirtextContacts(DatabaseMixin):
         return True
 
     def get_by_proxy_number(self, proxy_number: str):
-        with self.session() as session:
+        with self.database() as session:
             return session.query(Contact).filter_by(proxy_number=proxy_number).all()
 
     def get_by_name_and_member_id(self, name: str, member_id: int):
-        with self.session() as session:
+        with self.database() as session:
             return (
                 session.query(Contact)
                 .filter_by(
@@ -52,7 +52,7 @@ class AirtextContacts(DatabaseMixin):
             )
 
     def get_by_number_and_member_id(self, number: str, member_id: int):
-        with self.session() as session:
+        with self.database() as session:
             return (
                 session.query(Contact)
                 .filter_by(
@@ -63,7 +63,7 @@ class AirtextContacts(DatabaseMixin):
             )
 
     def update_contact(self, number: str, name: str, member_id: int):
-        with self.session() as session:
+        with self.database() as session:
             contact = (
                 session.query(Contact)
                 .filter_by(
@@ -82,7 +82,7 @@ class AirtextContacts(DatabaseMixin):
         return False
 
     def delete_contact(self, number: str, member_id: int):
-        with self.session() as session:
+        with self.database() as session:
             contact = (
                 session.query(Contact)
                 .filter_by(

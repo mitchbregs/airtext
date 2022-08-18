@@ -1,0 +1,10 @@
+Make the lowest pricing tier $30/mo if they provide their own Twilio keys and pay for their own usage..
+- Maybe make that the entire offering??
+--------------
+Pricing models
+- $25/mo provide api keys, up to 1000 messages/mo
+- $50/provide api keys, more than 2000 messages/mo
+- $100/provide api keys, more than 5000 messages/mo
+- $250/mo provide api keys, more than 20000 messages/mo
+- $500/mo provide api keys, unlimited
+--------------
