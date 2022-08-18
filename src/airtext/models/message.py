@@ -47,6 +47,29 @@ class MessageAPI(ExternalConnectionsMixin):
         return text
 
 
+class TextRegex:
+    COMMAND = r"^(ADD|GET|DELETE|UPDATE|TO|AIRTEXT)"
+    NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
+    NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
+    BODY = r"\n(.*)?"
+
+
+class TextCommand:
+    AIRTEXT: str = "AIRTEXT"
+    TO: str = "TO"
+    ADD: str = "ADD"
+    GET: str = "GET"
+    UPDATE: str = "UPDATE"
+    DELETE: str = "DELETE"
+
+
+class TextError:
+    COMMAND_NOT_FOUND: str = "command-not-found"
+    NUMBER_NOT_FOUND: str = "number-not-found"
+    NAME_NOT_FOUND: str = "name-not-found"
+    BODY_NOT_FOUND: str = "body-not-found"
+
+
 @dataclass
 class TextParserData:
     command: str
@@ -57,57 +80,66 @@ class TextParserData:
     error_code: str
 
 
-class TextParserError:
-    COMMAND_NOT_FOUND: str = "command-not-found"
-    NUMBER_NOT_FOUND: str = "number-not-found"
-    NAME_NOT_FOUND: str = "name-not-found"
-    BODY_NOT_FOUND: str = "body-not-found"
-
-
-class TextRegexCommands:
-    COMMAND = r"^(ADD|GET|DELETE|UPDATE|TO|AIRTEXT)"
-    NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
-    NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
-    # GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
-    BODY = r"\n(.*)?"
-
-
 class TextParser:
     def __init__(self, text: str):
         self.text = text
-        self.error = False
-        self.error_code = None
 
     def parse(self, is_incoming: bool):
-        # Reverse order of importance
-        if is_incoming:
-            body = self.get_incoming_body()
-        else:
-            body = self.get_outgoing_body()
-        name = self.get_name()
-        number = self.get_number()
         command = self.get_command()
+        number = self.get_number()
+        name = self.get_name()
+        body = self.get_incoming_body() if is_incoming else self.get_outgoing_body()
+        error = False
+        error_code = None
+
+        if command == TextCommand.AIRTEXT:
+            error = False
+            error_code = None
+        elif command == TextCommand.TO:
+            if not any([number, name]):
+                error = True
+                error_code = TextError.NUMBER_NOT_FOUND
+            if not body:
+                error = True
+                error_code = TextError.BODY_NOT_FOUND
+        elif command == TextCommand.ADD:
+            if not any([number, name]):
+                error = True
+                error_code = TextError.NUMBER_NOT_FOUND
+        elif command == TextCommand.GET:
+            if not any([number, name]):
+                error = True
+                error_code = TextError.NUMBER_NOT_FOUND
+        elif command == TextCommand.UPDATE:
+            if not number:
+                error = True
+                error_code = TextError.NUMBER_NOT_FOUND
+            if not name:
+                error = True
+                error_code = TextError.NAME_NOT_FOUND
+        elif command == TextCommand.DELETE:
+            if not any([number, name]):
+                error = True
+                error_code = TextError.NUMBER_NOT_FOUND
+        else:
+            error = True
+            error_code = TextError.COMMAND_NOT_FOUND
 
         return TextParserData(
             command=command,
             number=number,
             name=name,
             body=body,
-            error=self.error,
-            error_code=self.error_code,
+            error=error,
+            error_code=error_code,
         )
 
     def get_command(self):
         """Search for the command."""
-        pattern = re.compile(TextRegexCommands.COMMAND, re.IGNORECASE)
+        pattern = re.compile(TextRegex.COMMAND, re.IGNORECASE)
         search = pattern.search(self.text)
 
-        if not search:
-            self.error = True
-            self.error_code = TextParserError.COMMAND_NOT_FOUND
-            return None
-
-        command = search.group()
+        command = search.group() if search else None
 
         return command
 
@@ -118,12 +150,10 @@ class TextParser:
         - If exists, remove all symbols
         -- If length checks, format for insert and insert.
         """
-        pattern = re.compile(TextRegexCommands.NUMBER)
+        pattern = re.compile(TextRegex.NUMBER)
         search = pattern.search(self.text)
 
         if not search:
-            self.error = True
-            self.error_code = TextParserError.NUMBER_NOT_FOUND
             return None
 
         number = search.group()
@@ -134,39 +164,25 @@ class TextParser:
         elif len(number) == 11:
             number = f"+{number}"
         else:
-            self.error = True
-            self.error_code = TextParserError.NUMBER_NOT_FOUND
-            return
-
-        # TODO: We should make sure we are handling other cases...
+            number = None
 
         return number
 
     def get_name(self):
-        pattern = re.compile(TextRegexCommands.NAME)
+        pattern = re.compile(TextRegex.NAME)
         search = pattern.search(self.text)
 
-        if not search:
-            self.error_code = TextParserError.NAME_NOT_FOUND
-            return None
-
-        name = search.group()
+        name = search.group() if search else None
 
         return name
 
     def get_incoming_body(self):
-        self.error = False
-        self.error_code = None
         return self.text
 
     def get_outgoing_body(self):
-        pattern = re.compile(TextRegexCommands.BODY, flags=re.DOTALL)
+        pattern = re.compile(TextRegex.BODY, flags=re.DOTALL)
         search = pattern.search(self.text)
 
-        if not search:
-            self.error_code = TextParserError.BODY_NOT_FOUND
-            return None
-
-        body = search.group().strip()
+        body = search.group().strip() if search else None
 
         return body

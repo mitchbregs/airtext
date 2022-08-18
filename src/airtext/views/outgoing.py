@@ -1,5 +1,6 @@
 from airtext.api import AirtextAPI
 from airtext.models.member import Member
+from airtext.models.message import TextCommand
 from airtext.views.base import View
 from airtext.views.response import OutgoingResponse
 
@@ -235,17 +236,17 @@ class Outgoing(View):
         """Sends a message and stores record."""
         if self.text.error:
             self._run_error()
-        elif self.text.command.upper() == "AIRTEXT":
+        elif self.text.command.upper() == TextCommand.AIRTEXT:
             self._run_airtext_command()
-        elif self.text.command.upper() == "TO":
+        elif self.text.command.upper() == TextCommand.TO:
             self._run_to_command()
-        elif self.text.command.upper() == "ADD":
+        elif self.text.command.upper() == TextCommand.ADD:
             self._run_add_command()
-        elif self.text.command.upper() == "GET":
+        elif self.text.command.upper() == TextCommand.GET:
             self._run_get_command()
-        elif self.text.command.upper() == "UPDATE":
+        elif self.text.command.upper() == TextCommand.UPDATE:
             self._run_update_command()
-        elif self.text.command.upper() == "DELETE":
+        elif self.text.command.upper() == TextCommand.DELETE:
             self._run_delete_command()
         else:
             return False
