@@ -1,7 +1,7 @@
 from sqlalchemy import Column, text
 from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP, VARCHAR
 
-from airtext.models.mixin import DatabaseMixin, Base
+from airtext.models.mixin import ExternalConnectionsMixin, Base
 
 
 class Member(Base):
@@ -18,7 +18,7 @@ class Member(Base):
     )
 
 
-class AirtextMembers(DatabaseMixin):
+class MemberAPI(ExternalConnectionsMixin):
     def get_by_proxy_number(self, proxy_number: str):
-        with self.session() as session:
+        with self.database() as session:
             return session.query(Member).filter_by(proxy_number=proxy_number).one()

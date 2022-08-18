@@ -1,7 +1,10 @@
+import re
+from dataclasses import dataclass
+
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import BOOLEAN, INTEGER, TIMESTAMP, VARCHAR
 
-from airtext.models.mixin import DatabaseMixin, Base
+from airtext.models.mixin import ExternalConnectionsMixin, Base
 
 
 class Message(Base):
@@ -17,14 +20,14 @@ class Message(Base):
     name = Column(VARCHAR(36))
     body = Column(VARCHAR(720))
     error = Column(BOOLEAN)
-    error_message = Column(VARCHAR(720))
+    error_code = Column(VARCHAR(720))
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
 
 
-class AirtextMessages(DatabaseMixin):
-    def add_message(
+class MessageAPI(ExternalConnectionsMixin):
+    def create(
         self,
         proxy_number: str,
         from_number: str,
@@ -34,9 +37,9 @@ class AirtextMessages(DatabaseMixin):
         name: str,
         body: str,
         error: bool,
-        error_message: bool,
+        error_code: bool,
     ):
-        with self.session() as session:
+        with self.database() as session:
             message = Message(
                 proxy_number=proxy_number,
                 from_number=from_number,
@@ -46,9 +49,137 @@ class AirtextMessages(DatabaseMixin):
                 name=name,
                 body=body,
                 error=error,
-                error_message=error_message,
+                error_code=error_code,
             )
             session.add(message)
             session.commit()
 
+        self.twilio.messages.create(
+            to=from_number,
+            from_=proxy_number,
+            body=body,
+        )
+
         return True
+
+    def parse_text(self, text: str):
+        parser = TextParser(text=text)
+        text = parser.parse()
+        return text
+
+
+@dataclass
+class TextParserData:
+    command: str
+    number: str
+    name: str
+    body: str
+    error: bool
+    error_code: str
+
+
+class TextParserError:
+    COMMAND_NOT_FOUND: str = "command-not-found"
+    NUMBER_NOT_FOUND: str = "number-not-found"
+    NAME_NOT_FOUND: str = "name-not-found"
+    BODY_NOT_FOUND: str = "body-not-found"
+
+
+class TextRegexCommands:
+    COMMAND = r"^(ADD|GET|DELETE|UPDATE|TO|COMMANDS)"
+    NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
+    NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
+    # GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
+    BODY = r"(?<=\n)(.*)$"
+
+
+class TextParser:
+    def __init__(self, text: str):
+        self.text = text
+        self.error = False
+        self.error_code = None
+
+    def parse(self):
+        # Reverse order of significance
+        body = self.get_body()
+        name = self.get_name()
+        number = self.get_number()
+        command = self.get_command()
+
+        return TextParserData(
+            command=command,
+            number=number,
+            name=name,
+            body=body,
+            error=self.error,
+            error_code=self.error_code,
+        )
+
+    def get_command(self):
+        """Search for the command."""
+        pattern = re.compile(TextRegexCommands.COMMAND, re.IGNORECASE)
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error = True
+            self.error_code = TextParserError.COMMAND_NOT_FOUND
+            return None
+
+        command = search.group()
+
+        return command
+
+    def get_number(self):
+        """Search for number.
+
+        - If not exists, return error code.
+        - If exists, remove all symbols
+        -- If length checks, format for insert and insert.
+        """
+        pattern = re.compile(TextRegexCommands.NUMBER)
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error = True
+            self.error_code = TextParserError.NUMBER_NOT_FOUND
+            return None
+
+        number = search.group()
+        number = re.sub(r"[^\w]", "", number)
+
+        if len(number) == 10:
+            number = f"+1{number}"
+        elif len(number) == 11:
+            number = f"+{number}"
+        else:
+            self.error = True
+            self.error_code = TextParserError.NUMBER_NOT_FOUND
+            return
+
+        # TODO: We should make sure we are handling other cases...
+
+        return number
+
+    def get_name(self):
+        pattern = re.compile(TextRegexCommands.NAME)
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error_code = TextParserError.NAME_NOT_FOUND
+            return None
+
+        name = search.group()
+
+        return name
+
+    def get_body(self):
+        pattern = re.compile(TextRegexCommands.BODY)
+        search = pattern.search(self.text)
+
+        if not search:
+            self.error_code = TextParserError.BODY_NOT_FOUND
+            return None
+
+        body = search.group()
+
+        return body

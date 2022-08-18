@@ -1,17 +1,17 @@
-from airtext.models.contact import AirtextContacts
-from airtext.models.member import AirtextMembers
-from airtext.models.message import AirtextMessages
+from airtext.models.contact import ContactAPI
+from airtext.models.member import MemberAPI
+from airtext.models.message import MessageAPI
 
 
 class AirtextAPI:
     @property
     def contacts(self):
-        return AirtextContacts()
+        return ContactAPI()
 
     @property
     def members(self):
-        return AirtextMembers()
+        return MemberAPI()
 
     @property
     def messages(self):
-        return AirtextMessages()
+        return MessageAPI()
