@@ -1,4 +1,4 @@
-from airtext.models.base import Base
+from airtext.models.base import Contact
 from airtext.models.mixin import ExternalConnectionsMixin
 
 
