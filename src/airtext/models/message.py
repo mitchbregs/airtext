@@ -1,29 +1,8 @@
 import re
 from dataclasses import dataclass
 
-from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
-from sqlalchemy.dialects.postgresql import BOOLEAN, INTEGER, TIMESTAMP, VARCHAR
-
-from airtext.models.mixin import ExternalConnectionsMixin, Base
-
-
-class Message(Base):
-
-    __tablename__ = "messages"
-
-    id = Column(INTEGER, primary_key=True)
-    proxy_number = Column(VARCHAR(12), nullable=False)
-    to_number = Column(VARCHAR(12))
-    member_id = Column(INTEGER, ForeignKey("members.id"))
-    command = Column(VARCHAR(12))
-    number = Column(VARCHAR(12))
-    name = Column(VARCHAR(36))
-    body = Column(VARCHAR(720))
-    error = Column(BOOLEAN)
-    error_code = Column(VARCHAR(720))
-    created_on = Column(
-        TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
-    )
+from airtext.models.base import Message
+from airtext.models.mixin import ExternalConnectionsMixin
 
 
 class MessageAPI(ExternalConnectionsMixin):
@@ -90,7 +69,7 @@ class TextRegexCommands:
     NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
     # GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
-    BODY = r"(?<=\n)(.*)"
+    BODY = r"\n(.*)?"
 
 
 class TextParser:
@@ -180,13 +159,13 @@ class TextParser:
         return self.text
 
     def get_outgoing_body(self):
-        pattern = re.compile(TextRegexCommands.BODY)
+        pattern = re.compile(TextRegexCommands.BODY, flags=re.DOTALL)
         search = pattern.search(self.text)
 
         if not search:
             self.error_code = TextParserError.BODY_NOT_FOUND
             return None
 
-        body = search.group()
+        body = search.group().strip()
 
         return body
