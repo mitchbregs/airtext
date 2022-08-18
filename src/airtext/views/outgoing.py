@@ -15,7 +15,7 @@ class Outgoing(View):
     def _run_airtext_command(self):
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
@@ -28,10 +28,9 @@ class Outgoing(View):
         return
 
     def _run_to_command(self):
-
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.text.number,  # NOTE: Truly outgoing
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
@@ -54,7 +53,7 @@ class Outgoing(View):
         if is_added:
             self.api.messages.create(
                 proxy_number=self.member.proxy_number,
-                from_number=self.member.number,
+                to_number=self.member.number,
                 member_id=self.member.id,
                 command=self.text.command,
                 number=self.text.number,
@@ -70,7 +69,7 @@ class Outgoing(View):
 
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
@@ -99,7 +98,7 @@ class Outgoing(View):
         if contact:
             self.api.messages.create(
                 proxy_number=self.member.proxy_number,
-                from_number=self.member.number,
+                to_number=self.member.number,
                 member_id=self.member.id,
                 command=self.text.command,
                 number=self.text.number,
@@ -116,7 +115,7 @@ class Outgoing(View):
 
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
@@ -141,7 +140,7 @@ class Outgoing(View):
         if is_updated:
             self.api.messages.create(
                 proxy_number=self.member.proxy_number,
-                from_number=self.member.number,
+                to_number=self.member.number,
                 member_id=self.member.id,
                 command=self.text.command,
                 number=self.text.number,
@@ -158,7 +157,7 @@ class Outgoing(View):
 
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
@@ -182,7 +181,7 @@ class Outgoing(View):
         if is_deleted:
             self.api.messages.create(
                 proxy_number=self.member.proxy_number,
-                from_number=self.member.number,
+                to_number=self.member.number,
                 member_id=self.member.id,
                 command=self.text.command,
                 number=self.text.number,
@@ -199,7 +198,7 @@ class Outgoing(View):
 
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,
@@ -218,7 +217,7 @@ class Outgoing(View):
 
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.member.number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
             number=self.text.number,

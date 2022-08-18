@@ -13,7 +13,7 @@ class Message(Base):
 
     id = Column(INTEGER, primary_key=True)
     proxy_number = Column(VARCHAR(12), nullable=False)
-    from_number = Column(VARCHAR(12), nullable=False)
+    to_number = Column(VARCHAR(12))
     member_id = Column(INTEGER, ForeignKey("members.id"))
     command = Column(VARCHAR(12))
     number = Column(VARCHAR(12))
@@ -30,7 +30,7 @@ class MessageAPI(ExternalConnectionsMixin):
     def create(
         self,
         proxy_number: str,
-        from_number: str,
+        to_number: str,
         member_id: int,
         command: str,
         number: str,
@@ -42,7 +42,7 @@ class MessageAPI(ExternalConnectionsMixin):
         with self.database() as session:
             message = Message(
                 proxy_number=proxy_number,
-                from_number=from_number,
+                to_number=to_number,
                 member_id=member_id,
                 command=command,
                 number=number,
@@ -55,7 +55,7 @@ class MessageAPI(ExternalConnectionsMixin):
             session.commit()
 
         self.twilio.messages.create(
-            to=number,
+            to=to_number,
             from_=proxy_number,
             body=body,
         )

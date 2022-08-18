@@ -22,11 +22,11 @@ class Incoming(View):
 
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            from_number=self.from_number,
+            to_number=self.member.number,
             member_id=self.member.id,
             command=None,
-            number=self.member.number,
-            name=self.member.name,
+            number=self.from_number,
+            name=name,
             body=IncomingResponse.ALL.format(
                 number=self.from_number, name=name, text=self.text.body
             ),
