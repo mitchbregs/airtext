@@ -21,7 +21,7 @@ class Outgoing(View):
             command=self.text.command,
             number=self.text.number,
             name=self.text.name,
-            body=self.text.body,
+            body=OutgoingResponse.AIRTEXT,
             error=self.text.error,
             error_code=self.text.error_code,
         )
@@ -85,18 +85,10 @@ class Outgoing(View):
         return
 
     def _run_get_command(self):
-        if self.text.number:
-            contact = self.api.contacts.get_by_number_and_member_id(
-                number=self.text.number,
-                member_id=self.member.id,
-            )
-        elif self.text.name:
-            contact = self.api.contacts.get_by_name_and_member_id(
-                name=self.text.name,
-                member_id=self.member.id,
-            )
-
-        name = contact.name if contact else None
+        contact = self.api.contacts.get_by_number_and_member_id(
+            number=self.text.number,
+            member_id=self.member.id,
+        )
 
         if contact:
             self.api.messages.create(
@@ -176,19 +168,24 @@ class Outgoing(View):
         return
 
     def _run_delete_command(self):
+
+        contact = self.api.contacts.get_by_number_and_member_id(
+            number=self.text.number, member_id=self.member.id
+        )
+
         is_deleted = self.api.contacts.delete_contact(
             number=self.text.number,
             member_id=self.member.id,
         )
 
-        if is_deleted:
+        if contact and is_deleted:
             self.api.messages.create(
                 proxy_number=self.member.proxy_number,
                 to_number=self.member.number,
                 member_id=self.member.id,
                 command=self.text.command,
                 number=self.text.number,
-                name=self.text.name,
+                name=contact.name,
                 body=OutgoingResponse.DELETE_CONTACT.format(
                     number=self.text.number,
                     name=self.text.name,

@@ -1,1 +1,1 @@
-airtext==2.0.1
+airtext==2.1.0
