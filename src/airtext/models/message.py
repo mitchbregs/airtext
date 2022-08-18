@@ -79,13 +79,14 @@ class TextParser:
         self.error_code = None
 
     def parse(self, is_incoming: bool):
-        command = self.get_command()
-        number = self.get_number()
-        name = self.get_name()
+        # Reverse order of importance
         if is_incoming:
             body = self.get_incoming_body()
         else:
             body = self.get_outgoing_body()
+        name = self.get_name()
+        number = self.get_number()
+        command = self.get_command()
 
         return TextParserData(
             command=command,
