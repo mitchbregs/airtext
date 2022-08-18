@@ -95,7 +95,6 @@ class TextParser:
         if command == TextCommand.AIRTEXT:
             error = False
             error_code = None
-            body = ""
         elif command == TextCommand.TO:
             if not any([number, name]):
                 error = True
@@ -125,6 +124,10 @@ class TextParser:
         else:
             error = True
             error_code = TextError.COMMAND_NOT_FOUND
+
+        if is_incoming:
+            error = False
+            error_code = None
 
         return TextParserData(
             command=command,

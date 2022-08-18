@@ -30,6 +30,6 @@ class Incoming(View):
             body=IncomingResponse.ALL.format(
                 number=self.from_number, name=name, text=self.text.body
             ),
-            error=None,
-            error_code=None,
+            error=self.text.error,
+            error_code=self.text.error_code,
         )
