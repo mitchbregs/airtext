@@ -65,7 +65,7 @@ class TextParserError:
 
 
 class TextRegexCommands:
-    COMMAND = r"^(ADD|GET|DELETE|UPDATE|TO|COMMANDS)"
+    COMMAND = r"^(ADD|GET|DELETE|UPDATE|TO|AIRTEXT)"
     NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
     # GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
