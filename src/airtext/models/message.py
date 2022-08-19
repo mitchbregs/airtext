@@ -96,12 +96,12 @@ class TextParser:
             error = False
             error_code = None
         elif command == TextCommand.TO:
-            if not any([number, name]):
-                error = True
-                error_code = TextError.NUMBER_NOT_FOUND
             if not body:
                 error = True
                 error_code = TextError.BODY_NOT_FOUND
+            if not any([number, name]):
+                error = True
+                error_code = TextError.NUMBER_NOT_FOUND
         elif command == TextCommand.ADD:
             if not any([number, name]):
                 error = True
