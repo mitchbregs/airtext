@@ -16,14 +16,10 @@ class MessageController(Controller):
         )
 
         if self.request.from_number == member.number:
-            text = self.api.messages.parse_text(
-                text=self.request.text, is_incoming=False
-            )
+            text = self.request.parse_text(is_incoming=False)
             message = Outgoing(member=member, text=text)
         else:
-            text = self.api.messages.parse_text(
-                text=self.request.text, is_incoming=True
-            )
+            text = self.request.parse_text(is_incoming=True)
             message = Incoming(
                 member=member, from_number=self.request.from_number, text=text
             )

@@ -1,5 +1,5 @@
 from airtext.api import AirtextAPI
-from airtext.models.member import Member
+from airtext.models.base import Member
 from airtext.views.base import View
 from airtext.views.response import IncomingResponse
 

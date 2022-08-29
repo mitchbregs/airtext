@@ -1,6 +1,6 @@
 from airtext.api import AirtextAPI
-from airtext.models.member import Member
-from airtext.models.message import TextCommand
+from airtext.controllers.parser import TextCommand
+from airtext.models.base import Member
 from airtext.views.base import View
 from airtext.views.response import OutgoingResponse
 
@@ -19,8 +19,9 @@ class Outgoing(View):
             to_number=self.member.number,
             member_id=self.member.id,
             command=self.text.command,
-            number=self.text.number,
-            name=self.text.name,
+            numbers=self.text.numbers,
+            names=self.text.names,
+            groups=self.text.groups,
             body=OutgoingResponse.AIRTEXT,
             error=self.text.error,
             error_code=self.text.error_code,
@@ -31,11 +32,11 @@ class Outgoing(View):
     def _run_to_command(self):
         self.api.messages.create(
             proxy_number=self.member.proxy_number,
-            to_number=self.text.number,  # NOTE: Truly outgoing
             member_id=self.member.id,
             command=self.text.command,
-            number=self.text.number,
-            name=self.text.name,
+            numbers=self.text.numbers,
+            names=self.text.names,
+            groups=self.text.groups,
             body=self.text.body,
             error=self.text.error,
             error_code=self.text.error_code,
@@ -44,6 +45,32 @@ class Outgoing(View):
         return
 
     def _run_add_command(self):
+        # ADD 9086162014
+        # ADD 9086162014 @Mitch
+        # ADD 9085152013 @John
+        # ADD 9086162014 @Mitch,9085152013 @John
+        # ADD 9086162014 @Mitch,9085152013
+
+        # CREATE #MyGroup
+        # CREATE #MyGroup
+        # PUT 9086162014 #MyGroup
+        # PUT 9086162014,9085152013 #MyGroup
+        # PUT 9086162014,9085152013 #MyGroup
+        # ADD @Mitch #MyGroup
+        # ADD @Mitch,@John #MyGroup
+        # ADD 9086162014 #MyGroup
+
+        contact_identifier
+
+        # If just a number
+        if len(self.text.numbers) == 1:
+            number = self.text.numbers[0]
+
+        # If just a number and name
+
+        # If just a group
+
+        # If numbers and names, and just a group
 
         is_added = self.api.contacts.add_contact(
             name=self.text.name,
@@ -245,6 +272,10 @@ class Outgoing(View):
             self._run_update_command()
         elif self.text.command.upper() == TextCommand.DELETE:
             self._run_delete_command()
+        elif self.text.command.upper() == TextCommand.PUT:
+            self._run_put_command()
+        elif self.text.command.upper() == TextCommand.REMOVE:
+            self._run_remove_command()
         else:
             return False
 

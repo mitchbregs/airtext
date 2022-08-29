@@ -1,4 +1,7 @@
+from typing import List
 from urllib import parse
+
+from airtext.controllers.parser import TextParser
 
 
 class MessageRequest:
@@ -15,3 +18,8 @@ class MessageRequest:
         return (
             f"<MessageEvent to_number={self.to_number} from_number={self.from_number}>"
         )
+
+    def parse_text(self, is_incoming: bool = False):
+        parser = TextParser(text=self.text)
+        text = parser.parse(is_incoming=is_incoming)
+        return text
