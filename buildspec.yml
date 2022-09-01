@@ -1,0 +1,11 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - aws codeartifact login --tool twine --repository airtext-pypi-store --domain airtext-pypi --domain-owner 312590578399
+  build:
+    commands:
+      - pip install -e '.[pkg]'
+      - python -m build --sdist --wheel --outdir dist/ .
+      - twine upload --verbose -r codeartifact dist/*

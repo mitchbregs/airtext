@@ -1,0 +1,10 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - pip install -e '.[dev]'
+  build:
+    commands:
+      - alembic revision --autogenerate
+      - alembic upgrade head
