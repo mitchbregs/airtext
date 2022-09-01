@@ -1,4 +1,13 @@
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import inspect
+from sqlalchemy.ext.declarative import as_declarative
 
-Base = declarative_base()
+
+@as_declarative()
+class Base:
+    def to_dict(self):
+        return {
+            c.key: getattr(self, c.key)
+            for c in inspect(self).mapper.column_attrs
+        }
+
 metadata = Base.metadata

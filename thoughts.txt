@@ -11,6 +11,9 @@ Pricing models
 - $250/mo provide api keys, more than 20000 messages/mo
 - $500/mo provide api keys, unlimited
 --------------
+- FREE/mo + Twilio - no groups
+- $50/mo + Twilio - no limits
+- $100/mo + Twilio - advanced features (scheduling, a/b testing, support)
 
 -------------------
 ADD {contact/group}

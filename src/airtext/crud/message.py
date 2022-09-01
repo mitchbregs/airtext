@@ -7,6 +7,10 @@ from airtext.models.message import Message
 class MessageAPI(ExternalConnectionsMixin):
     def create(
         self,
+        to_number: str,
+        from_number: str,
+        body_content: str,
+        media_content: str,
         proxy_number: str,
         member_id: int,
         command: str,
@@ -15,10 +19,8 @@ class MessageAPI(ExternalConnectionsMixin):
         groups: list,
         body: str,
         error: bool,
-        error_code: bool,
+        error_code: str,
     ):
-        number_list = numbers
-
         contacts_api = ContactAPI()
         for name in names:
             contact = contacts_api.get_by_name_and_member_id(
@@ -26,7 +28,7 @@ class MessageAPI(ExternalConnectionsMixin):
             )
 
             if contact:
-                number_list.append(contact.number)
+                numbers.append(contact.number)
 
         group_contacts_api = GroupContactAPI()
         group_contacts = []
@@ -37,14 +39,19 @@ class MessageAPI(ExternalConnectionsMixin):
             )
 
             for group_contact in contact_list:
-                number_list.append(group_contact.get("number"))
+                numbers.append(group_contact.get("number"))
 
         with self.database() as session:
             messages = []
-            for number in number_list:
+
+            for number in numbers:
                 message = Message(
+                    to_number=to_number,
+                    from_number=from_number,
+                    body_content=body_content,
+                    media_content=media_content,
                     proxy_number=proxy_number,
-                    to_number=number,
+                    number=number,
                     member_id=member_id,
                     command=command,
                     numbers=numbers,
@@ -56,14 +63,23 @@ class MessageAPI(ExternalConnectionsMixin):
                 )
                 messages.append(message)
 
-            session.add(message)
-            session.commit()
+                self.twilio.messages.create(
+                    to=number,
+                    from_=proxy_number,
+                    body=body,
+                    media_url=media_content,
+                )
 
-        for number in number_list:
-            self.twilio.messages.create(
-                to=number,
-                from_=proxy_number,
-                body=body,
+                session.add(message)
+                session.commit()
+
+        return
+
+    def get_by_proxy_number(self, proxy_number: str):
+        with self.database() as session:
+            return (
+                session.query(Message)
+                .filter_by(proxy_number=proxy_number)
+                .order_by(Message.created_on)
+                .all()
             )
-
-        return True

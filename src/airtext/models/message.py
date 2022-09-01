@@ -9,8 +9,12 @@ class Message(Base):
     __tablename__ = "messages"
 
     id = Column(INTEGER, primary_key=True)
+    to_number = Column(VARCHAR(12), nullable=False)
+    from_number = Column(VARCHAR(12), nullable=False)
+    body_content = Column(VARCHAR(720))
+    media_content = Column(VARCHAR(720))
     proxy_number = Column(VARCHAR(12), nullable=False)
-    to_number = Column(VARCHAR(12))
+    number = Column(VARCHAR(12))
     member_id = Column(INTEGER, ForeignKey("members.id"))
     command = Column(VARCHAR(12))
     numbers = Column(ARRAY(VARCHAR(12)))

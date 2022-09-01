@@ -1,28 +1,28 @@
-from sqlalchemy.exc import IntegrityError
-
-from airtext.crud.mixin import ExternalConnectionsMixin
+from airtext.crud.base import ExternalConnectionsMixin
 from airtext.models.contact import Contact
+from airtext.models.member import Member
 
 
 class ContactAPI(ExternalConnectionsMixin):
-    def add_contact(self, name: str, number: str, member_id: int):
+    def create(self, number: str, member_id: int, name: str = None):
         with self.database() as session:
             contact = Contact(
-                name=name,
                 number=number,
                 member_id=member_id,
+                name=name,
             )
             session.add(contact)
-            try:
-                session.commit()
-            except IntegrityError:
-                return False
+            session.commit()
 
-        return True
+        return
 
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:
-            return session.query(Contact).filter_by(proxy_number=proxy_number).all()
+            return (
+                session.query(Contact)
+                    .join(Member)
+                    .filter_by(proxy_number=proxy_number).all()
+            )
 
     def get_by_name_and_member_id(self, name: str, member_id: int):
         with self.database() as session:
@@ -46,7 +46,7 @@ class ContactAPI(ExternalConnectionsMixin):
                 .first()
             )
 
-    def update_contact(self, number: str, name: str, member_id: int):
+    def update(self, number: str, member_id: int, name: str):
         with self.database() as session:
             contact = (
                 session.query(Contact)
@@ -56,16 +56,12 @@ class ContactAPI(ExternalConnectionsMixin):
                 )
                 .first()
             )
+            contact.name = name
+            session.commit()
 
-            if contact:
-                contact.name = name
-                session.commit()
+        return
 
-                return True
-
-        return False
-
-    def delete_contact(self, number: str, member_id: int):
+    def delete(self, number: str, member_id: int):
         with self.database() as session:
             contact = (
                 session.query(Contact)
@@ -75,11 +71,7 @@ class ContactAPI(ExternalConnectionsMixin):
                 )
                 .first()
             )
+            session.delete(contact)
+            session.commit()
 
-            if contact:
-                session.delete(contact)
-                session.commit()
-
-                return True
-
-        return False
+        return

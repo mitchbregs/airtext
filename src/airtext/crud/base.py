@@ -9,4 +9,7 @@ class ExternalConnectionsMixin:
     def __init__(self):
         engine = create_engine(url=MESSAGES_DATABASE_URL)
         self.database = sessionmaker(engine)
-        self.twilio = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
+    @property
+    def twilio(self):
+        return Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)

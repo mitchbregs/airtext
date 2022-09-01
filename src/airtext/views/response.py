@@ -1,5 +1,5 @@
 class IncomingResponse(object):
-    ALL = "FROM {number} @{name}\n\n{text}"
+    ALL = "FROM {number} @{name}\n\n{body_content}"
 
 
 class OutgoingResponse(object):
