@@ -19,7 +19,7 @@ def main(event: Dict, context: Dict) -> None:
     proxy_number = params["proxy_number"]
 
     try:
-        result = airtext.messages.get_by_proxy_number(proxy_number=proxy_number)
+        results = airtext.messages.get_by_proxy_number(proxy_number=proxy_number)
         messages = [row.to_dict() for row in results]
     except Exception as e:
         logger.info(e)
