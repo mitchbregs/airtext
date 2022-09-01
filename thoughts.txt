@@ -1,10 +1,116 @@
+PRICING
+-------
 Make the lowest pricing tier $30/mo if they provide their own Twilio keys and pay for their own usage..
 - Maybe make that the entire offering??
 --------------
 Pricing models
+- FREE/mo provide api keys, up to 100 messages/mo
 - $25/mo provide api keys, up to 1000 messages/mo
 - $50/provide api keys, more than 2000 messages/mo
 - $100/provide api keys, more than 5000 messages/mo
 - $250/mo provide api keys, more than 20000 messages/mo
 - $500/mo provide api keys, unlimited
 --------------
+- FREE/mo + Twilio - no groups
+- $50/mo + Twilio - no limits
+- $100/mo + Twilio - advanced features (scheduling, a/b testing, support)
+
+-------------------
+ADD {contact/group}
+GET {contact/group}
+UPDATE {contact}
+PUT {group}
+REMOVE
+DELETE {contact/group}
+TO
+
+1. Add contact(s)  # NOTE: number required
+
+ADD 9086162014
+ADD 9086162014 @Mitch
+ADD 9086162014,8881119999
+ADD 9086162013,8881119999 @John
+ADD 9086162014 @Mitch,8881119999 @John
+
+{
+    "command":
+    
+    
+     "ADD",
+    "data": {
+        "numbers": ["+19086162014"],
+        "number_names": [("+18881119999", "John"),],
+        "groups": [],
+    },
+}
+
+2. Add group(s)  # NOTE: group name required
+
+ADD #MyGroup
+ADD #MyGroup,#MySecondGroup
+
+{
+    "command": "ADD",
+    "data": {
+        "numbers": [],
+        "number_names": [],
+        "groups": ["MyGroup", "MySecondGroup"],
+    },
+}
+
+3. Get contact
+
+GET 9086162014
+GET @Mitch
+
+{
+    "command": "GET",
+    "numbers": ["+19086162014"],
+    "number_names": [],
+    "groups": [],
+    },
+}
+
+4. Get group
+
+GET #MyGroup
+
+5. Update contact,  # NOTE: number, name required
+
+UPDATE 9086162014 @Mitch
+
+6. Put contact(s) into group
+
+PUT 9086162014 #MyGroup
+PUT @Mitch #MyGroup
+PUT 9086162014,@Mitch #MyGroup
+
+7. Remove contact(s) from group
+
+REMOVE 9086162014 #MyGroup
+REMOVE 9086162014,@Mitch #MyGroup
+
+8. Delete contact(s)
+
+DELETE 9086162014
+DELETE @Mitch
+DELETE 9086162014,@Mitch
+
+9. Delete group(s)
+
+DELETE #MyGroup,#MySecondGroup
+
+10. Send message(s)
+
+TO 9086162014 ...
+TO 9086162014,@Mitch ...
+TO 9086162014,#MyGroup ...
+TO #MyGroup ...
+TO #MyGroup,#MySecondGroup ...
+
+-------------
+PAID FEATUERS
+-------------------
+- Scheduling
+- A/B testing
+- Multiple numbers

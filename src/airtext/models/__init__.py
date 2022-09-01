@@ -1,13 +1,15 @@
-from .base import Contact, Member, Message
-from .contact import ContactAPI
-from .member import MemberAPI
-from .message import MessageAPI
+from .base import Base
+from .contact import Contact
+from .group_contact import GroupContact
+from .group import Group
+from .member import Member
+from .message import Message
 
 __all__ = [
+    "Base",
     "Contact",
-    "ContactAPI",
+    "GroupContact",
+    "Group",
     "Member",
-    "MemberAPI",
     "Message",
-    "MessageAPI",
 ]

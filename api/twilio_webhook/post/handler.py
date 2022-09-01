@@ -1,4 +1,5 @@
 """Message AWS Lambda handler."""
+import json
 import logging
 from typing import Dict
 
@@ -26,3 +27,12 @@ def main(event: Dict, context: Dict) -> None:
 
     controller = MessageController(request=request)
     controller.dispatch_request()
+
+    return {
+        "statusCode": 200,
+        "headers": {
+            "Content-Type": "application/xml",
+        },
+        "body": "<Response/>",
+        "isBase64Encoded": False,
+    }

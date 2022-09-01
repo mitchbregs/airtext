@@ -8,24 +8,16 @@ from airtext.views.outgoing import Outgoing
 class MessageController(Controller):
     def __init__(self, request: MessageRequest):
         super().__init__(request=request)
-        self.api = AirtextAPI()
 
     def dispatch_request(self):
+        message = self.request.parse_message()
         member = self.api.members.get_by_proxy_number(
-            proxy_number=self.request.to_number
+            proxy_number=message.to_number
         )
 
-        if self.request.from_number == member.number:
-            text = self.api.messages.parse_text(
-                text=self.request.text, is_incoming=False
-            )
-            message = Outgoing(member=member, text=text)
+        if message.from_number == member.number:
+            request = Outgoing(member=member, message=message)
         else:
-            text = self.api.messages.parse_text(
-                text=self.request.text, is_incoming=True
-            )
-            message = Incoming(
-                member=member, from_number=self.request.from_number, text=text
-            )
+            request = Incoming(member=member, message=message)
 
-        message.send()
+        request.send()
