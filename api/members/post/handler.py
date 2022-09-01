@@ -21,10 +21,14 @@ def main(event: Dict, context: Dict) -> None:
     number = body["number"]
 
     try:
-        airtext.members.create(
+        member = airtext.members.create(
             name=name,
             email=email,
             number=number,
+        )
+        group = airtext.groups.create(
+            name="#all",
+            member_id=member.id,
         )
     except Exception as e:
         logger.info(e)

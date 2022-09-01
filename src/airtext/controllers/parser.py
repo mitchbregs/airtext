@@ -56,7 +56,7 @@ class MessageParser:
         self.to_number = unquote_plus(event["To"])
         self.from_number = unquote_plus(event["From"])
         self.body_content = unquote_plus(event["Body"])
-        media_url = event.get("MediaUrl0") # TODO: Handle multiple
+        media_url = event.get("MediaUrl0")  # TODO: Handle multiple
         self.media_content = unquote_plus(media_url) if media_url else None
 
     def parse(self):
@@ -98,7 +98,7 @@ class MessageParser:
                 error_code = MessageError.NUMBER_NOT_FOUND
         elif command == MessageCommand.CREATE:
             if not group:
-                error=True
+                error = True
                 error_code = MessageError.GROUP_NOT_FOUND
         elif command == MessageCommand.PUT:
             if not any([numbers, names]):

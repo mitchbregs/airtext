@@ -25,13 +25,15 @@ class Incoming(View):
             proxy_number=self.member.proxy_number,
             member_id=self.member.id,
             command=None,
-            numbers=[self.member.number,],
+            numbers=[
+                self.member.number,
+            ],
             names=[],
             groups=[],
             body=IncomingResponse.ALL.format(
                 number=self.message.from_number,
                 name=name,
-                body_content=self.message.body_content
+                body_content=self.message.body_content,
             ),
             error=False,
             error_code=None,

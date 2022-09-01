@@ -1,9 +1,9 @@
-from airtext.crud.base import ExternalConnectionsMixin
+from airtext.crud.base import DatabaseMixin
 from airtext.models.contact import Contact
 from airtext.models.member import Member
 
 
-class ContactAPI(ExternalConnectionsMixin):
+class ContactAPI(DatabaseMixin):
     def create(self, number: str, member_id: int, name: str = None):
         with self.database() as session:
             contact = Contact(
@@ -12,16 +12,26 @@ class ContactAPI(ExternalConnectionsMixin):
                 name=name,
             )
             session.add(contact)
+            session.refresh(contact)
             session.commit()
 
-        return
+        return contact
+
+    def get_by_member_id(self, member_id: int):
+        with self.database() as session:
+            return (
+                session.query(Contact)
+                .filter_by(member_id=member_id)
+                .all()
+            )
 
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:
             return (
                 session.query(Contact)
-                    .join(Member)
-                    .filter_by(proxy_number=proxy_number).all()
+                .join(Member)
+                .filter_by(proxy_number=proxy_number)
+                .all()
             )
 
     def get_by_name_and_member_id(self, name: str, member_id: int):

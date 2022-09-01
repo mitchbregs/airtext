@@ -1,10 +1,10 @@
-from airtext.crud.base import ExternalConnectionsMixin
+from airtext.crud.base import DatabaseMixin
 from airtext.crud.contact import ContactAPI
 from airtext.crud.group_contact import GroupContactAPI
 from airtext.models.message import Message
 
 
-class MessageAPI(ExternalConnectionsMixin):
+class MessageAPI(DatabaseMixin):
     def create(
         self,
         to_number: str,
@@ -71,9 +71,10 @@ class MessageAPI(ExternalConnectionsMixin):
                 )
 
                 session.add(message)
+                session.refresh(message)
                 session.commit()
 
-        return
+        return message
 
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:

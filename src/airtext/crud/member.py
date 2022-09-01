@@ -1,14 +1,14 @@
-from airtext.crud.base import ExternalConnectionsMixin
+from airtext.crud.base import DatabaseMixin
 from airtext.models.member import Member
 
 
-class MemberAPI(ExternalConnectionsMixin):
+class MemberAPI(DatabaseMixin):
     def create(self, name: str, email: str, number: str, area_code: str = None):
         area_code = area_code if area_code else number[2:5]
         phone = self.twilio.incoming_phone_numbers.create(area_code=area_code)
         phone.update(
-            sms_method='POST',
-            sms_url='https://z4muss792f.execute-api.us-east-1.amazonaws.com/dev/twilio-webhook',
+            sms_method="POST",
+            sms_url="https://z4muss792f.execute-api.us-east-1.amazonaws.com/dev/twilio-webhook",
         )
 
         with self.database() as session:
@@ -19,9 +19,10 @@ class MemberAPI(ExternalConnectionsMixin):
                 number=number,
             )
             session.add(member)
+            session.refresh(member)
             session.commit()
 
-        return
+        return member
 
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:

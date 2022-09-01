@@ -11,9 +11,7 @@ class MessageController(Controller):
 
     def dispatch_request(self):
         message = self.request.parse_message()
-        member = self.api.members.get_by_proxy_number(
-            proxy_number=message.to_number
-        )
+        member = self.api.members.get_by_proxy_number(proxy_number=message.to_number)
 
         if message.from_number == member.number:
             request = Outgoing(member=member, message=message)

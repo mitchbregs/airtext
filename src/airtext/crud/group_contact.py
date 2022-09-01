@@ -1,23 +1,35 @@
-from airtext.crud.base import ExternalConnectionsMixin
-from airtext.models.contact import Contact
-from airtext.models.group import Group
+from airtext.crud.base import DatabaseMixin
 from airtext.models.group_contact import GroupContact
 
 
-class GroupContactAPI(ExternalConnectionsMixin):
-    def get_by_name_and_member_id(self, name: str, member_id: int):
+class GroupContactAPI(DatabaseMixin):
+    def create(self, group_id: int, contact_id: int):
         with self.database() as session:
-            results = (
-                session.query(GroupContact, Group, Contact)
-                .join(Group)
-                .join(Contact)
-                .filter(Group.name == name)
-                .filter(Group.member_id == member_id)
-                .filter_by(proxy_number=proxy_number)
-                .all()
+            group_contact = GroupContact(
+                group_id=group_id,
+                contact_id=contact_id,
             )
+            session.add(group_contact)
+            session.refresh(group_contact)
+            session.commit()
 
-        import ipdb
+        return group_contact
 
-        ipdb.set_trace()
-        return []
+    def get_by_group_id(self, group_id: int):
+        with self.database() as session:
+            return session.query(GroupContact).filter_by(group_id=group_id).all()
+
+    def delete(self, group_id: int, contact_id: int):
+        with self.database() as session:
+            group_contact = (
+                session.query(GroupContact)
+                .filter_by(
+                    group_id=group_id,
+                    contact_id=contact_id,
+                )
+                .first()
+            )
+            session.delete(group_contact)
+            session.commit()
+
+        return
