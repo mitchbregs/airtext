@@ -3,9 +3,39 @@ from dataclasses import dataclass
 from typing import List, Tuple
 from urllib.parse import unquote_plus
 
+from airtext.api import AirtextAPI
+from airtext.controllers.base import Controller
+from airtext.views.incoming import Incoming
+from airtext.views.outgoing import Outgoing
+
+
+class MessageController(Controller):
+    def __init__(self, request: MessageRequest):
+        super().__init__(request=request)
+
+    def dispatch_request(self):
+        message = self.request.parse_message()
+        member = self.api.members.get_by_proxy_number(proxy_number=message.to_number)
+
+        if message.from_number == member.number:
+            request = Outgoing(member=member, message=message)
+        else:
+            request = Incoming(member=member, message=message)
+
+        request.send()
+
+
+class MessageRequest:
+    def __init__(self, event: dict):
+        self.event = event
+
+    def parse_message(self):
+        parser = MessageParser(event=self.event)
+        message = parser.parse()
+        return message
+
 
 class MessageRegex:
-    # TODO: Introduce FIND for contacts
     COMMAND = r"^(AIRTEXT|TO|ADD|GET|UPDATE|DELETE|CREATE|PUT|REMOVE)"
     NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"

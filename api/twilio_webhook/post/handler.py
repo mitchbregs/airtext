@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Dict
 
-from airtext.controllers import MessageController, MessageRequest
+from airtext.controllers.twilio_webhook import MessageController
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

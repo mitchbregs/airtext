@@ -10,11 +10,15 @@
     },
     "number": {
       "type": "string"
+    },
+    "area_code": {
+      "type": "string"
     }
   },
   "required": [
     "name",
     "email",
-    "number"
+    "number",
+    "area_code"
   ]
 }
