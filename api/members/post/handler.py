@@ -16,11 +16,12 @@ def main(event: Dict, context: Dict) -> None:
 
     body = json.loads(event["body"])
 
-    airtext = AirtextAPI()
     name = body["name"]
     email = body["email"]
     number = body["number"]
     area_code = body["area_code"]
+
+    airtext = AirtextAPI()
 
     # Validate number format
     search = re.search(r"^\+1\d{10}$", number)
@@ -83,7 +84,7 @@ def main(event: Dict, context: Dict) -> None:
 
     logger.info(member.to_dict())
     return {
-        "statusCode": 200,
+        "statusCode": 201,
         "headers": {
             "Content-Type": "application/json",
         },

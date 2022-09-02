@@ -15,9 +15,10 @@ def main(event: Dict, context: Dict) -> None:
 
     params = event["queryStringParameters"]
 
-    airtext = AirtextAPI()
     id_ = params.get("id")
     proxy_number = params.get("proxy_number")
+
+    airtext = AirtextAPI()
 
     if id_:
         try:
