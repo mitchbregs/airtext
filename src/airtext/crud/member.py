@@ -1,4 +1,4 @@
-from airtext.crud.base import DatabaseMixin, Response
+from airtext.crud.base import DatabaseMixin
 from airtext.models.member import Member
 
 
