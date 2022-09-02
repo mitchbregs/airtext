@@ -6,11 +6,10 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/AWSCodeArtifactA
 aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/CloudWatchLogsFullAccess --role-name codebuild-airtext-pypi-packge-service-role
 echo "Creating CodeBuild project..."
 sleep 10s
-aws codebuild \
-create-project \
---name airtext-pypi-package \
---source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "buildspec.yml"}' \
---artifacts '{"type": "NO_ARTIFACTS"}' \
---environment '{"type": "LINUX_CONTAINER", "image": "aws/codebuild/standard:6.0", "computeType": "BUILD_GENERAL1_SMALL"}' \
---service-role codebuild-airtext-pypi-packge-service-role \
---logs-config '{"cloudWatchLogs": {"status": "ENABLED"}}'
+aws codebuild create-project \
+    --name airtext-pypi-package \
+    --source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "buildspec.yml"}' \
+    --artifacts '{"type": "NO_ARTIFACTS"}' \
+    --environment '{"type": "LINUX_CONTAINER", "image": "aws/codebuild/standard:6.0", "computeType": "BUILD_GENERAL1_SMALL"}' \
+    --service-role codebuild-airtext-pypi-packge-service-role \
+    --logs-config '{"cloudWatchLogs": {"status": "ENABLED"}}'
