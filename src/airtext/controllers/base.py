@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from airtext.api import AirtextAPI
-from airtext.controllers.request import MessageRequest
+from airtext.controllers.twilio_webhook import MessageRequest
 
 
 class Controller(ABC):

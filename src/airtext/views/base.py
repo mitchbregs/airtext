@@ -1,5 +1,5 @@
 from airtext.api import AirtextAPI
-from airtext.controllers.parser import MessageParserData
+from airtext.controllers.twilio_webhook import MessageParserData
 from airtext.models.member import Member
 
 
