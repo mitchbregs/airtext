@@ -1,4 +1,4 @@
-from airtext.crud.base import DatabaseMixin, Response
+from airtext.crud.base import DatabaseMixin
 from airtext.models.group_contact import GroupContact
 
 
@@ -13,11 +13,7 @@ class GroupContactAPI(DatabaseMixin):
             session.refresh(group_contact)
             session.commit()
 
-        return Response(
-            text="Successfully created group contact.",
-            body=group_contact.to_dict(),
-            error=False
-        )
+        return group_contact
 
     def get_by_group_id(self, group_id: int):
         with self.database() as session:
@@ -35,17 +31,9 @@ class GroupContactAPI(DatabaseMixin):
             )
 
             if not group_contact:
-                return Reponse(
-                    text="Group contact not found.",
-                    body={},
-                    error=True,
-                )
+                return False
 
             session.delete(group_contact)
             session.commit()
 
-        return Response(
-            text="Successfully removed contact from group.",
-            body={},
-            error=False,
-        )
+        return True
