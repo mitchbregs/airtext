@@ -12,14 +12,16 @@ class TwilioAPI(TwilioMixin):
             sms_url="https://z4muss792f.execute-api.us-east-1.amazonaws.com/dev/twilio-webhook",
         )
 
-        return phone.phone_number
+        return phone
 
     def create_message(
         self, to_number: str, proxy_number: str, body: str, media_url: str
     ):
-        self.twilio.messages.create(
+        message = self.twilio.messages.create(
             to=number,
             from_=proxy_number,
             body=body,
             media_url=media_url,
         )
+
+        return message
