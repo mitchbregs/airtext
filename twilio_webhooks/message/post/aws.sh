@@ -9,8 +9,8 @@ echo "Creating CodeBuild project..."
 sleep 10s
 aws codebuild \
 create-project \
---name dev-airtext-api-twilio-webhook-post \
---source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "api/twilio_webhook/post/buildspec.yml"}' \
+--name dev-twilio-webhook-messages-post \
+--source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "twilio_webhooks/message/post/buildspec.yml"}' \
 --artifacts '{"type": "NO_ARTIFACTS"}' \
 --environment '{"type": "LINUX_CONTAINER", "image": "aws/codebuild/standard:6.0", "privilegedMode": true, "computeType": "BUILD_GENERAL1_SMALL"}' \
 --service-role codebuild-airtext-api-dev-twilio-webhook-post-service-role \
