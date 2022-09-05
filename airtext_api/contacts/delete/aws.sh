@@ -24,7 +24,7 @@ aws lambda create-function \
 echo "Creating CodeBuild project..."
 aws codebuild create-project \
 --name ${ENVIRONMENT}-airtext-api-contacts-delete-ecr \
---source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "api/contacts/delete/buildspec.'${ENVIRONMENT}'.yml"}' \
+--source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "airtext_api/contacts/delete/buildspec.'${ENVIRONMENT}'.yml"}' \
 --artifacts '{"type": "NO_ARTIFACTS"}' \
 --environment '{"type": "LINUX_CONTAINER", "image": "aws/codebuild/standard:6.0", "privilegedMode": true, "computeType": "BUILD_GENERAL1_SMALL"}' \
 --service-role codebuild-${ENVIRONMENT}-airtext-api-contacts-delete-ecr-service-role \
