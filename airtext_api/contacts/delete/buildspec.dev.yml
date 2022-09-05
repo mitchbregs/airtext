@@ -13,4 +13,4 @@ phases:
       - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-contacts-delete-lambda:latest
   post_build:
     commands:
-      - aws lambda update-function-code --function-name dev-contacts-delete --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-contacts-delete-lambda:latest
+      - aws lambda update-function-code --function-name dev-airtext-api-contacts-delete --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-contacts-delete-lambda:latest
