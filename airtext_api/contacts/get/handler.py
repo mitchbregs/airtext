@@ -23,7 +23,14 @@ def main(event: Dict, context: Dict) -> None:
         contacts = [row.to_dict() for row in results]
     except Exception as e:
         logger.info(e)
-        raise e
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Unable to retrieve contacts."),
+            "isBase64Encoded": False,
+        }
 
     return {
         "statusCode": 200,
