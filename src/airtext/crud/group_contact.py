@@ -10,8 +10,8 @@ class GroupContactAPI(DatabaseMixin):
                 contact_id=contact_id,
             )
             session.add(group_contact)
-            session.refresh(group_contact)
             session.commit()
+            session.refresh(group_contact)
 
         return group_contact
 

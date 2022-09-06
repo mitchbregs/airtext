@@ -11,8 +11,8 @@ class GroupAPI(DatabaseMixin):
                 member_id=member_id,
             )
             session.add(group)
-            session.refresh(group)
             session.commit()
+            session.refresh(group)
 
         return group
 

@@ -12,8 +12,8 @@ class MemberAPI(DatabaseMixin):
                 number=number,
             )
             session.add(member)
-            session.refresh(member)
             session.commit()
+            session.refresh(member)
 
         return member
 

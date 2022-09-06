@@ -71,8 +71,8 @@ class MessageAPI(DatabaseMixin):
                 )
 
                 session.add(message)
-                session.refresh(message)
                 session.commit()
+                session.refresh(message)
 
         return message
 

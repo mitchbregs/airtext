@@ -12,8 +12,8 @@ class ContactAPI(DatabaseMixin):
                 name=name,
             )
             session.add(contact)
-            session.refresh(contact)
             session.commit()
+            session.refresh(contact)
 
         return contact
 
@@ -68,8 +68,9 @@ class ContactAPI(DatabaseMixin):
             )
             contact.name = name
             session.commit()
+            session.refresh(contact)
 
-        return
+        return contact
 
     def delete(self, number: str, member_id: int):
         with self.database() as session:
