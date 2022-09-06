@@ -15,8 +15,8 @@ def main(event: Dict, context: Dict) -> None:
 
     params = event["queryStringParameters"]
 
-    id_ = params.get("id")
-    proxy_number = params.get("proxy_number")
+    id_ = params.get("id") if params else None
+    proxy_number = params.get("proxy_number") if params else None
 
     airtext = AirtextAPI()
 
