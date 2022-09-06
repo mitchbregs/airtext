@@ -68,7 +68,7 @@ def main(event: Dict, context: Dict) -> None:
 
     try:
         group = airtext.groups.create(
-            name="#all",
+            name="all",
             member_id=member.id,
         )
     except Exception as e:
@@ -82,7 +82,6 @@ def main(event: Dict, context: Dict) -> None:
             "isBase64Encoded": False,
         }
 
-    logger.info(member.to_dict())
     return {
         "statusCode": 201,
         "headers": {
