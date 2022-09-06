@@ -8,9 +8,9 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 312590578399.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-members-post api/group_contacts/get/.
-      - docker tag dev-airtext-api-members-post:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-members-post:latest
-      - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-members-post:latest
+      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-members-post-lambda airtext_api/members/post/.
+      - docker tag dev-airtext-api-members-post-lambda:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-members-post-lambda:latest
+      - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-members-post-lambda:latest
   post_build:
     commands:
-      - aws lambda update-function-code --function-name dev-members-post --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-members-post:latest
+      - aws lambda update-function-code --function-name dev-airtext-api-members-post --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-members-post-lambda:latest
