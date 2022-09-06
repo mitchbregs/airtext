@@ -24,7 +24,7 @@ def main(event: Dict, context: Dict) -> None:
     except Exception as e:
         logger.error(e)
         return {
-            "statusCode": 200,
+            "statusCode": 400,
             "headers": {
                 "Content-Type": "application/json",
             },

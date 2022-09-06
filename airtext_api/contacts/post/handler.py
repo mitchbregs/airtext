@@ -32,7 +32,7 @@ def main(event: Dict, context: Dict) -> None:
             group_id=group.id,
         )
     except Exception as e:
-        logger.info(e)
+        logger.error(e)
         return {
             "statusCode": 400,
             "headers": {
