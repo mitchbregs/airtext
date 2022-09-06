@@ -50,7 +50,7 @@ def main(event: Dict, context: Dict) -> None:
 
     try:
         member = airtext.members.create(
-            proxy_number=proxy_number.phone_number
+            proxy_number=proxy_number.phone_number,
             name=name,
             email=email,
             number=number,

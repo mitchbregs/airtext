@@ -20,7 +20,9 @@ def main(event: Dict, context: Dict) -> None:
     contact_id = body["contact_id"]
 
     try:
-        group_contact = airtext.group_contacts.delete(group_id=group_id, contact_id=contact_id)
+        group_contact = airtext.group_contacts.delete(
+            group_id=group_id, contact_id=contact_id
+        )
     except Exception as e:
         logger.info(e)
         raise e
@@ -33,7 +35,6 @@ def main(event: Dict, context: Dict) -> None:
         "body": json.dumps("Group contact deleted."),
         "isBase64Encoded": False,
     }
-
 
     body = json.loads(event["body"])
 
