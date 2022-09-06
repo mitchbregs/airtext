@@ -8,9 +8,9 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 312590578399.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-groups-delete api/group_contacts/get/.
-      - docker tag dev-airtext-api-groups-delete:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-groups-delete:latest
-      - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-groups-delete:latest
+      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t prod-airtext-api-groups-get-lambda airtext_api/groups/get/.
+      - docker tag prod-airtext-api-groups-get-lambda:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/prod-airtext-api-groups-get-lambda:latest
+      - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/prod-airtext-api-groups-get-lambda:latest
   post_build:
     commands:
-      - aws lambda update-function-code --function-name dev-groups-delete --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-groups-delete:latest
+      - aws lambda update-function-code --function-name prod-airtext-api-groups-get --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/prod-airtext-api-groups-get-lambda:latest
