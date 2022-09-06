@@ -33,13 +33,20 @@ def main(event: Dict, context: Dict) -> None:
         )
     except Exception as e:
         logger.info(e)
-        raise e
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Unable to create contact."),
+            "isBase64Encoded": False,
+        }
 
     return {
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
         },
-        "body": json.dumps("Contact created."),
+        "body": contact.to_json(),
         "isBase64Encoded": False,
     }

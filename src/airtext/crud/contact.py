@@ -12,6 +12,7 @@ class ContactAPI(DatabaseMixin):
                 name=name,
             )
             session.add(contact)
+            # session.flush()
             session.commit()
             session.refresh(contact)
 
