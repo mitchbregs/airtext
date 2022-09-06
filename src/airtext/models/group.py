@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
-from sqlalchemy.dialects.postgresql import ARRAY, BOOLEAN, INTEGER, TIMESTAMP, VARCHAR
+from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP, VARCHAR
+from sqlalchemy.orm import relationship
 
 from airtext.models.base import Base
 
@@ -13,6 +14,12 @@ class Group(Base):
     member_id = Column(INTEGER, ForeignKey("members.id"))
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
+    )
+
+    group_contacts = relationship(
+        "GroupContact",
+        back_populates="groups",
+        cascade="all,delete"
     )
 
     __table_args__ = (UniqueConstraint("name", "member_id"),)

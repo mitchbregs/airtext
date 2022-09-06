@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import ARRAY, BOOLEAN, INTEGER, TIMESTAMP, VARCHAR
+from sqlalchemy.orm import relationship
 
 from airtext.models.base import Base
 
@@ -23,6 +24,7 @@ class Message(Base):
     body = Column(VARCHAR(720))
     error = Column(BOOLEAN)
     error_code = Column(VARCHAR(720))
+
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
