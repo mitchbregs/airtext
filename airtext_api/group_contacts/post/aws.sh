@@ -1,4 +1,4 @@
-export ENVIRONMENT=prod
+export ENVIRONMENT=dev
 echo "Using '${ENVIRONMENT}' environment..."
 echo "Creating ECR service role..."
 aws iam create-role --role-name codebuild-${ENVIRONMENT}-airtext-api-group-contacts-post-ecr-service --assume-role-policy-document '{"Version": "2012-10-17", "Statement": [{"Effect": "Allow", "Principal": {"Service": "codebuild.amazonaws.com"}, "Action": "sts:AssumeRole"}]}'
