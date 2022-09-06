@@ -8,7 +8,7 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 312590578399.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-contacts-put-lambda airtext_api/contacts/delete/.
+      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-contacts-put-lambda airtext_api/contacts/put/.
       - docker tag dev-airtext-api-contacts-put-lambda:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-contacts-put-lambda:latest
       - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-contacts-put-lambda:latest
   post_build:
