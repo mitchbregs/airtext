@@ -27,7 +27,7 @@ def main(event: Dict, context: Dict) -> None:
             name=name,
         )
         group = airtext.groups.get_by_member_id(member_id=member_id)
-        group_contact - airtext.group_contacts.create(
+        group_contact = airtext.group_contacts.create(
             contact_id=contact.id,
             group_id=group.id,
         )
