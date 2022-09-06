@@ -8,7 +8,8 @@ from .twilio import TwilioAPI
 
 __all__ = [
     "ContactAPI",
-    "DatabaseMixin" "GroupAPI",
+    "DatabaseMixin",
+    "GroupAPI",
     "GroupContactAPI",
     "MemberAPI",
     "MessageAPI",

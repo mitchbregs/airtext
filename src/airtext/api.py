@@ -3,6 +3,7 @@ from airtext.crud.group import GroupAPI
 from airtext.crud.group_contact import GroupContactAPI
 from airtext.crud.member import MemberAPI
 from airtext.crud.message import MessageAPI
+from airtext.crud.twilio import TwilioAPI
 
 
 class AirtextAPI:
@@ -25,3 +26,7 @@ class AirtextAPI:
     @property
     def messages(self):
         return MessageAPI()
+
+    @property
+    def twilio(self):
+        return TwilioAPI()
