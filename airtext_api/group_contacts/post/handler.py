@@ -3,6 +3,8 @@ import logging
 from typing import Dict
 
 from airtext.api import AirtextAPI
+from sqlalchemy.exc import IntegrityError
+from psycopg2.errors import UniqueViolation
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -24,10 +26,28 @@ def main(event: Dict, context: Dict) -> None:
             group_id=group_id,
             contact_id=contact_id,
         )
+
+    except IntegrityError as e:
+        logger.error(e)
+
+        if isinstance(e.orig, UniqueViolation):
+            message = "Group contact already exists."
+        else:
+            message = "Error inserting into database."
+
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps(message),
+            "isBase64Encoded": False,
+        }
+
     except Exception as e:
         logger.error(e)
         return {
-            "statusCode": 200,
+            "statusCode": 400,
             "headers": {
                 "Content-Type": "application/json",
             },
