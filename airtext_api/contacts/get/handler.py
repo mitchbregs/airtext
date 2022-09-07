@@ -16,10 +16,10 @@ def main(event: Dict, context: Dict) -> None:
     params = event["queryStringParameters"]
 
     airtext = AirtextAPI()
-    proxy_number = params.get("proxy_number")
+    member_id = params["member_id"]
 
     try:
-        results = airtext.contacts.get_by_proxy_number(proxy_number=proxy_number)
+        results = airtext.contacts.get_by_member_id(member_id=member_id)
         contacts = [row.to_dict() for row in results]
     except Exception as e:
         logger.error(e)

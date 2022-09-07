@@ -26,7 +26,7 @@ class ContactAPI(DatabaseMixin):
                 .all()
             )
 
-    def get_by_proxy_number(self, proxy_number: str):
+    def get_by_member_proxy_number(self, proxy_number: str):
         with self.database() as session:
             return (
                 session.query(Contact)
