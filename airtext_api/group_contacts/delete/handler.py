@@ -20,12 +20,17 @@ def main(event: Dict, context: Dict) -> None:
     contact_id = body["contact_id"]
 
     try:
-        group_contact = airtext.group_contacts.delete(
-            group_id=group_id, contact_id=contact_id
-        )
+        airtext.group_contacts.delete(group_id=group_id, contact_id=contact_id)
     except Exception as e:
-        logger.info(e)
-        raise e
+        logger.error(e)
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Unable to delete group contact."),
+            "isBase64Encoded": False,
+        }
 
     return {
         "statusCode": 200,
@@ -33,27 +38,5 @@ def main(event: Dict, context: Dict) -> None:
             "Content-Type": "application/json",
         },
         "body": json.dumps("Group contact deleted."),
-        "isBase64Encoded": False,
-    }
-
-    body = json.loads(event["body"])
-
-    airtext = AirtextAPI()
-    group_id = body["group_id"]
-
-    try:
-        group = airtext.groups.delete(
-            group_id=group_id,
-        )
-    except Exception as e:
-        logger.info(e)
-        raise e
-
-    return {
-        "statusCode": 200,
-        "headers": {
-            "Content-Type": "application/json",
-        },
-        "body": json.dumps("Group deleted."),
         "isBase64Encoded": False,
     }

@@ -51,4 +51,4 @@ class GroupAPI(DatabaseMixin):
             session.delete(group)
             session.commit()
 
-        return group
+        return

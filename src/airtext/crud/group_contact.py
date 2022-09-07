@@ -35,11 +35,7 @@ class GroupContactAPI(DatabaseMixin):
                 )
                 .first()
             )
-
-            if not group_contact:
-                return False
-
             session.delete(group_contact)
             session.commit()
 
-        return True
+        return
