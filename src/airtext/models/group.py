@@ -16,10 +16,7 @@ class Group(Base):
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
 
-    group_contacts = relationship(
-        "GroupContact",
-        back_populates="groups",
-        cascade="all,delete"
-    )
+    members = relationship("Member", back_populates="groups")
+    group_contacts = relationship("GroupContact", back_populates="groups", cascade="all,delete")
 
     __table_args__ = (UniqueConstraint("name", "member_id"),)

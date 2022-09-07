@@ -27,9 +27,10 @@ class GroupAPI(DatabaseMixin):
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:
             return (
-                session.query(Group, Member)
+                session.query(Group)
+                .join(Member)
                 .filter_by(proxy_number=proxy_number)
-                .one()
+                .all()
             )
 
     def delete(self, group_id: int):

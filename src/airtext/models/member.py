@@ -1,5 +1,6 @@
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import ARRAY, BOOLEAN, INTEGER, TIMESTAMP, VARCHAR
+from sqlalchemy.orm import relationship
 
 from airtext.models.base import Base
 
@@ -16,3 +17,5 @@ class Member(Base):
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )
+
+    groups = relationship("Group", back_populates="members", cascade="all,delete")
