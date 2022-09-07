@@ -24,6 +24,14 @@ class GroupAPI(DatabaseMixin):
                 .one()
             )
 
+    def get_by_name_and_member_id(self, name: str, member_id: int):
+        with self.database() as session:
+            return (
+                session.query(Group)
+                .filter_by(name=name, member_id=member_id)
+                .one()
+            )
+
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:
             return (
