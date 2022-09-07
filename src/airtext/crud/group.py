@@ -33,11 +33,11 @@ class GroupAPI(DatabaseMixin):
                 .all()
             )
 
-    def delete(self, group_id: int):
+    def delete(self, name: str, member_id: int):
         with self.database() as session:
             group = (
                 session.query(Group)
-                .filter_by(group_id=group_id)
+                .filter_by(name=name, member_id=member_id)
                 .one()
             )
             session.delete(group)
