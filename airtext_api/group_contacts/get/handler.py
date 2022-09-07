@@ -22,8 +22,15 @@ def main(event: Dict, context: Dict) -> None:
         results = airtext.group_contacts.get_by_group_id(group_id=group_id)
         group_contacts = [row.to_dict() for row in results]
     except Exception as e:
-        logger.info(e)
-        raise e
+        logger.error(e)
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Unable to retrieve group contacts."),
+            "isBase64Encoded": False,
+        }
 
     return {
         "statusCode": 200,

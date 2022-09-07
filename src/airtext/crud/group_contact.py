@@ -1,4 +1,5 @@
 from airtext.crud.base import DatabaseMixin
+from airtext.models.contact import Contact
 from airtext.models.group_contact import GroupContact
 
 
@@ -17,12 +18,17 @@ class GroupContactAPI(DatabaseMixin):
 
     def get_by_group_id(self, group_id: int):
         with self.database() as session:
-            return session.query(GroupContact).filter_by(group_id=group_id).all()
+            return (
+                session.query(Contact)
+                .join(GroupContact)
+                .filter_by(group_id=group_id)
+                .all()
+            )
 
     def delete(self, group_id: int, contact_id: int):
         with self.database() as session:
             group_contact = (
-                session.query(GroupContact)
+                session.query(Contact, GroupContact)
                 .filter_by(
                     group_id=group_id,
                     contact_id=contact_id,
