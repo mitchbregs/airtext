@@ -16,14 +16,23 @@ def main(event: Dict, context: Dict) -> None:
     params = event["queryStringParameters"]
 
     airtext = AirtextAPI()
-    proxy_number = params["proxy_number"]
+    member_id = params["member_id"]
 
     try:
-        results = airtext.messages.get_by_proxy_number(proxy_number=proxy_number)
-        messages = [row.to_dict() for row in results]
+        messages = airtext.messages.get_by_number_and_member_id(
+            number=number,
+            member_id=member_id,
+        )
     except Exception as e:
-        logger.info(e)
-        raise e
+        logger.error(e)
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Unable to retrieve messages."),
+            "isBase64Encoded": False,
+        }
 
     return {
         "statusCode": 200,

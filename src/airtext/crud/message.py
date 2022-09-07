@@ -1,6 +1,10 @@
+from sqlalchemy import asc, text
+from sqlalchemy.sql.expression import literal
+
 from airtext.crud.base import DatabaseMixin
 from airtext.crud.contact import ContactAPI
 from airtext.crud.group_contact import GroupContactAPI
+from airtext.models.member import Member
 from airtext.models.message import Message
 
 
@@ -76,11 +80,80 @@ class MessageAPI(DatabaseMixin):
 
         return message
 
-    def get_by_proxy_number(self, proxy_number: str):
+    def get_by_number_and_member_id(self, number: str, member_id: int):
+        """Gets a conversation."""
+        # -- Gets incoming messages
+        # select
+        #     created_on,
+        #     number as from_number,
+        #     to_number as to_number,
+        #     body as body,
+        #     media_content as media_url,
+        #     true as is_incoming
+        # from messages
+        # where number = :number -- from_number
+        # and to_number = (
+        #     select proxy_number
+        #     from members
+        #     where id = :member_id
+        # ) -- proxy_number
+        # union
+        # -- Gets outgoing messages, yes it's weird
+        # select
+        #     created_on,
+        #     to_number as from_number,
+        #     from_number as to_number,
+        #     body_content as body,
+        #     media_content as media_url,
+        #     false as is_incoming
+        # from messages
+        # where from_number = :number -- from_number
+        # and to_number = (
+        #     select proxy_number
+        #     from members
+        #     where id = :member_id
+        # ) -- proxy_number
+        # order by created_on
         with self.database() as session:
-            return (
-                session.query(Message)
-                .filter_by(proxy_number=proxy_number)
-                .order_by(Message.created_on)
-                .all()
+            proxy_number = (
+                session.query(Member.proxy_number)
+                .filter_by(id=member_id)
+                .scalar_subquery()
             )
+            incoming = (
+                session.query(
+                    Message.created_on.label("created_on"),
+                    Message.number.label("from_number"),
+                    Message.to_number.label("to_number"),
+                    Message.body.label("body"),
+                    Message.media_content.label("media_url"),
+                    literal(True).label("is_incoming"),
+                )
+                .filter_by(
+                    number=number,
+                    to_number=proxy_number
+                )
+            )
+            outgoing = (
+                session.query(
+                    Message.created_on.label("created_on"),
+                    Message.to_number.label("from_number"),
+                    Message.from_number.label("to_number"),
+                    Message.body_content.label("body"),
+                    Message.media_content.label("media_url"),
+                    literal(False).label("is_incoming"),
+                )
+                .filter_by(
+                    from_number=number,
+                    to_number=proxy_number
+                )
+            )
+            messages = [
+                dict(x) for x in (
+                    incoming.union(outgoing)
+                    .order_by(asc(Message.created_on))
+                    .all()
+                )
+            ]
+
+        return messages
