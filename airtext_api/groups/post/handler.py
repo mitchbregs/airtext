@@ -3,7 +3,7 @@ import logging
 from typing import Dict
 
 from airtext.api import AirtextAPI
-
+from psycopg2.errors import UniqueViolation
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -24,6 +24,16 @@ def main(event: Dict, context: Dict) -> None:
             name=name,
             member_id=member_id,
         )
+    except UniqueViolation as e:
+        logger.error(e)
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Group already exists."),
+            "isBase64Encoded": False,
+        }
     except Exception as e:
         logger.error(e)
         return {
