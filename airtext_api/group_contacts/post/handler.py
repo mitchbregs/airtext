@@ -25,14 +25,21 @@ def main(event: Dict, context: Dict) -> None:
             contact_id=contact_id,
         )
     except Exception as e:
-        logger.info(e)
-        raise e
+        logger.error(e)
+        return {
+            "statusCode": 200,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps("Unable to create group contact."),
+            "isBase64Encoded": False,
+        }
 
     return {
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
         },
-        "body": json.dumps("Group created."),
+        "body": group_contact.to_json(),
         "isBase64Encoded": False,
     }
