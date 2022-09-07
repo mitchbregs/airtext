@@ -21,7 +21,7 @@ class GroupAPI(DatabaseMixin):
             return (
                 session.query(Group)
                 .filter_by(member_id=member_id)
-                .one()
+                .all()
             )
 
     def get_by_name_and_member_id(self, name: str, member_id: int):
