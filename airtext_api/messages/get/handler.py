@@ -16,6 +16,7 @@ def main(event: Dict, context: Dict) -> None:
     params = event["queryStringParameters"]
 
     airtext = AirtextAPI()
+    number = params["number"]
     member_id = params["member_id"]
 
     try:
