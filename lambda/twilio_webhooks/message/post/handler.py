@@ -23,13 +23,23 @@ def main(event: Dict, context: Dict) -> None:
     logger.info(event)
     logger.info(context)
 
-    request = MessageRequest(event=event)
-
-    controller = MessageController(request=request)
-    controller.dispatch_request()
+    try:
+        request = MessageRequest(event=event)
+        controller = MessageController(request=request)
+        controller.dispatch_request()
+    except Exception as e:
+        logger.error(e)
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/xml",
+            },
+            "body": "<Response/>",
+            "isBase64Encoded": False,
+        }
 
     return {
-        "statusCode": 200,
+        "statusCode": 201,
         "headers": {
             "Content-Type": "application/xml",
         },

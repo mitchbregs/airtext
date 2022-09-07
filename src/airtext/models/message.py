@@ -16,7 +16,7 @@ class Message(Base):
     media_content = Column(VARCHAR(720))
     proxy_number = Column(VARCHAR(12), nullable=False)
     number = Column(VARCHAR(12))
-    member_id = Column(INTEGER, ForeignKey("members.id"))
+    member_id = Column(INTEGER, nullable=False, ForeignKey("members.id"))
     command = Column(VARCHAR(12))
     numbers = Column(ARRAY(VARCHAR(12)))
     names = Column(ARRAY(VARCHAR(36)))
