@@ -22,18 +22,8 @@ def main(event: Dict, context: Dict) -> None:
     try:
         group = airtext.groups.create(
             name=name,
-            member_id=int(member_id),
+            member_id=member_id,
         )
-    except ValueError as e:
-        logger.error(e)
-        return {
-            "statusCode": 400,
-            "headers": {
-                "Content-Type": "application/json",
-            },
-            "body": json.dumps("`member_id` must be an integer."),
-            "isBase64Encoded": False,
-        }
     except Exception as e:
         logger.error(e)
         return {
