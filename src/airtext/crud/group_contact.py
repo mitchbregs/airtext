@@ -28,7 +28,7 @@ class GroupContactAPI(DatabaseMixin):
     def delete(self, group_id: int, contact_id: int):
         with self.database() as session:
             group_contact = (
-                session.query(Contact, GroupContact)
+                session.query(GroupContact)
                 .filter_by(
                     group_id=group_id,
                     contact_id=contact_id,
