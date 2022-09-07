@@ -19,6 +19,18 @@ def main(event: Dict, context: Dict) -> None:
     name = body["name"]
     member_id = body["member_id"]
 
+    if name == "all":
+        message = "Cannot delete `all` group."
+        logger.error(message)
+        return {
+            "statusCode": 400,
+            "headers": {
+                "Content-Type": "application/json",
+            },
+            "body": json.dumps(message),
+            "isBase64Encoded": False,
+        }
+
     try:
         airtext.groups.delete(name=name, member_id=member_id)
     except NoResultFound as e:
@@ -28,7 +40,7 @@ def main(event: Dict, context: Dict) -> None:
             "headers": {
                 "Content-Type": "application/json",
             },
-            "body": json.dumps("Group specified does not exist."),
+            "body": json.dumps("Group does not exist."),
             "isBase64Encoded": False,
         }
     except Exception as e:
