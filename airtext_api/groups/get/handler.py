@@ -23,9 +23,9 @@ def main(event: Dict, context: Dict) -> None:
         results = airtext.groups.get_by_proxy_number(proxy_number=proxy_number)
         groups = [row.to_dict() for row in results]
     except Exception as e:
-        logger.info(e)
+        logger.error(e)
         return {
-            "statusCode": 200,
+            "statusCode": 400,
             "headers": {
                 "Content-Type": "application/json",
             },
