@@ -8,9 +8,9 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 312590578399.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-twilio-webhook-messages-post-lambda lambda/twilio_webhook/message/post/.
+      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-twilio-webhook-messages-post-lambda lambda/twilio_webhook/messages/post/.
       - docker tag dev-twilio-webhook-messages-post-lambda:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-twilio-webhook-messages-post-lambda:latest
-      - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-twilio-webhook-messages-post:latest
+      - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-twilio-webhook-messages-post-lambda:latest
   post_build:
     commands:
       - aws lambda update-function-code --function-name dev-twilio-webhook-messages-post --image-uri 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-twilio-webhook-messages-post-lambda:latest
