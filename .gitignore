@@ -7,3 +7,4 @@ build/
 *.pem
 __pycache__/
 ideas.md
+fakedata.py

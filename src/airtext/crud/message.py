@@ -21,6 +21,7 @@ class MessageAPI(DatabaseMixin):
         command: str,
         numbers: list,
         names: list,
+        number_names: list,
         groups: list,
         body: str,
         error: bool,
@@ -40,7 +41,7 @@ class MessageAPI(DatabaseMixin):
         for group in groups:
             contact_list = group_contacts_api.get_by_name_and_member_id(
                 name=group,
-                member_id=membeR_id,
+                member_id=member_id,
             )
 
             for group_contact in contact_list:
@@ -62,6 +63,7 @@ class MessageAPI(DatabaseMixin):
                     command=command,
                     numbers=numbers,
                     names=names,
+                    number_names=number_names,
                     groups=groups,
                     body=body,
                     error=error,

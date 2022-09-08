@@ -22,9 +22,8 @@ config.set_main_option("sqlalchemy.url", os.getenv("MESSAGES_DATABASE_URL"))
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
-# target_metadata = mymodel.Base.metadata)
+# target_metadata = mymodel.Base.metadata
 from airtext.models import Base
-
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

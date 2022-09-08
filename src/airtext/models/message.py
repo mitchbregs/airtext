@@ -20,6 +20,7 @@ class Message(Base):
     command = Column(VARCHAR(12))
     numbers = Column(ARRAY(VARCHAR(12)))
     names = Column(ARRAY(VARCHAR(36)))
+    number_names = Column(ARRAY(VARCHAR(36)))
     groups = Column(ARRAY(VARCHAR(36)))
     body = Column(VARCHAR(720))
     error = Column(BOOLEAN)

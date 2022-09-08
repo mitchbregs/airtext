@@ -32,6 +32,7 @@ class RequestRegex:
     NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
     NUMBER_NAME = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\s+(?=@)(.*?)(?=\,|$|\s+|\:|\;)"
+    NAME_NUMBER = r"(?=@)(.*?)(?=\,|$|\s+|\:|\;)\s+(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
     BODY = r"\n(.*)?"
 
@@ -206,6 +207,26 @@ class RequestParser:
         for number_name in search:
             number_name = number_name.strip()
             number, name = number_name.split(" ")
+
+            number = re.sub(r"[^\w]", "", number)
+            if len(number) == 10:
+                number = f"+1{number}"
+            elif len(number) == 11:
+                number = f"+{number}"
+            else:
+                number = None
+
+            name = name.replace("@", "")
+
+            number_name = (number, name)
+            number_names.append(number_name)
+
+        pattern = re.compile(RequestRegex.NAME_NUMBER)
+        search = [x.group() for x in pattern.finditer(self.body_content)]
+
+        for name_number in search:
+            name_number = number_name.strip()
+            name, number = number_name.split(" ")
 
             number = re.sub(r"[^\w]", "", number)
             if len(number) == 10:
