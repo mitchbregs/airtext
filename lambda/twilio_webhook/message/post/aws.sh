@@ -24,7 +24,7 @@ aws lambda create-function \
 echo "Creating CodeBuild project..."
 aws codebuild create-project \
 --name ${ENVIRONMENT}-twilio-webhook-messages-post-ecr \
---source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "lambda/twilio_webhooks/message/post/buildspec.'${ENVIRONMENT}'.yml"}' \
+--source '{"type": "GITHUB", "location": "https://github.com/mitchbregs/airtext", "buildspec": "lambda/twilio_webhook/message/post/buildspec.'${ENVIRONMENT}'.yml"}' \
 --artifacts '{"type": "NO_ARTIFACTS"}' \
 --environment '{"type": "LINUX_CONTAINER", "image": "aws/codebuild/standard:6.0", "privilegedMode": true, "computeType": "BUILD_GENERAL1_SMALL"}' \
 --service-role codebuild-${ENVIRONMENT}-twilio-webhook-messages-post-ecr-service-role \
