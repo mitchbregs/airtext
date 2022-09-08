@@ -1,7 +1,3 @@
-from .incoming import Incoming
-from .outgoing import Outgoing
+from .base import View
 
-__all__ = [
-    "Incoming",
-    "Outgoing",
-]
+__all__ = ["View",]

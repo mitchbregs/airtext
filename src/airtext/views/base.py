@@ -1,10 +1,10 @@
 from airtext.api import AirtextAPI
-from airtext.controllers.twilio_webhook import MessageParserData
+from airtext.controllers.base import RequestParserData
 from airtext.models.member import Member
 
 
 class View:
-    def __init__(self, member: Member, message: MessageParserData):
+    def __init__(self, member: Member, message: RequestParserData):
         self.member = member
         self.message = message
         self.api = AirtextAPI()

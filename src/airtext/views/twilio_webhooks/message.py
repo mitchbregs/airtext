@@ -1,4 +1,4 @@
-from airtext.controllers.twilio_webhooks.message import MessageCommand, MessageParserData
+from airtext.controllers.base import RequestCommand, RequestParserData
 from airtext.models.member import Member
 from airtext.views.base import View
 
@@ -79,7 +79,7 @@ class OutgoingResponse(object):
 class Incoming(View):
     """Handles incoming message end-user result."""
 
-    def __init__(self, member: Member, message: MessageParserData):
+    def __init__(self, member: Member, message: RequestParserData):
         super().__init__(member=member, message=message)
 
     def send(self):
@@ -116,7 +116,7 @@ class Incoming(View):
 class Outgoing(View):
     """Handles outgoing message from member."""
 
-    def __init__(self, member: Member, message: MessageParserData):
+    def __init__(self, member: Member, message: RequestParserData):
         super().__init__(member=member, message=message)
 
     def _run_airtext_command(self):
@@ -370,21 +370,21 @@ class Outgoing(View):
         """Sends a message and stores record."""
         if self.message.error:
             self._run_error()
-        elif self.message.command.upper() == MessageCommand.AIRTEXT:
+        elif self.message.command.upper() == RequestCommand.AIRTEXT:
             self._run_airtext_command()
-        elif self.message.command.upper() == MessageCommand.TO:
+        elif self.message.command.upper() == RequestCommand.TO:
             self._run_to_command()
-        elif self.message.command.upper() == MessageCommand.ADD:
+        elif self.message.command.upper() == RequestCommand.ADD:
             self._run_add_command()
-        elif self.message.command.upper() == MessageCommand.GET:
+        elif self.message.command.upper() == RequestCommand.GET:
             self._run_get_command()
-        elif self.message.command.upper() == MessageCommand.UPDATE:
+        elif self.message.command.upper() == RequestCommand.UPDATE:
             self._run_update_command()
-        elif self.message.command.upper() == MessageCommand.DELETE:
+        elif self.message.command.upper() == RequestCommand.DELETE:
             self._run_delete_command()
-        elif self.message.command.upper() == MessageCommand.PUT:
+        elif self.message.command.upper() == RequestCommand.PUT:
             self._run_put_command()
-        elif self.message.command.upper() == MessageCommand.REMOVE:
+        elif self.message.command.upper() == RequestCommand.REMOVE:
             self._run_remove_command()
         else:
             return False

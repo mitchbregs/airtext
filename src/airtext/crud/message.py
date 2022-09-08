@@ -4,6 +4,7 @@ from sqlalchemy.sql.expression import literal
 from airtext.crud.base import DatabaseMixin
 from airtext.crud.contact import ContactAPI
 from airtext.crud.group_contact import GroupContactAPI
+from airtext.crud.twilio import TwilioAPI
 from airtext.models.member import Member
 from airtext.models.message import Message
 
@@ -45,6 +46,7 @@ class MessageAPI(DatabaseMixin):
             for group_contact in contact_list:
                 numbers.append(group_contact.get("number"))
 
+        twilio_api = TwilioAPI()
         with self.database() as session:
             messages = []
 
@@ -67,9 +69,9 @@ class MessageAPI(DatabaseMixin):
                 )
                 messages.append(message)
 
-                self.twilio.messages.create(
-                    to=number,
-                    from_=proxy_number,
+                twilio_api.create_message(
+                    to_number=number,
+                    proxy_number=proxy_number,
                     body=body,
                     media_url=media_content,
                 )

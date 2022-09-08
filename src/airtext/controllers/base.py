@@ -1,15 +1,10 @@
+import re
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from typing import List, Tuple
+from urllib.parse import unquote_plus
+
 from airtext.api import AirtextAPI
-
-
-class Controller(ABC):
-    def __init__(self, request: Request):
-        self.request = request
-        self.api = AirtextAPI()
-
-    @abstractmethod
-    def dispatch_request(self):
-        pass
 
 
 class Request:
@@ -21,6 +16,15 @@ class Request:
         message = parser.parse()
         return message
 
+
+class Controller(ABC):
+    def __init__(self, request: Request):
+        self.request = request
+        self.api = AirtextAPI()
+
+    @abstractmethod
+    def dispatch_request(self):
+        pass
 
 
 class RequestRegex:

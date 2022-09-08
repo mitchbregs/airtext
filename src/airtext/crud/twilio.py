@@ -18,10 +18,8 @@ class TwilioAPI(TwilioMixin):
         self, to_number: str, proxy_number: str, body: str, media_url: str
     ):
         message = self.twilio.messages.create(
-            to=number,
+            to=to_number,
             from_=proxy_number,
             body=body,
             media_url=media_url,
         )
-
-        return message

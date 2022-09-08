@@ -1,3 +1,3 @@
-from .message import MessageController, MessageRequest
+from .message import MessageController
 
 __all__ = ["MessageController",]
