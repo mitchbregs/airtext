@@ -1,4 +1,4 @@
-from airtext.controllers.twilio_webhook import MessageCommand, MessageParserData
+from airtext.controllers.twilio_webhooks.message import MessageCommand, MessageParserData
 from airtext.models.member import Member
 from airtext.views.base import View
 

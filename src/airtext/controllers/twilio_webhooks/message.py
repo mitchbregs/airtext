@@ -5,8 +5,17 @@ from urllib.parse import unquote_plus
 
 from airtext.api import AirtextAPI
 from airtext.controllers.base import Controller
-from airtext.views.incoming import Incoming
-from airtext.views.outgoing import Outgoing
+from airtext.views.twilio_webhooks.message import Incoming, Outgoing
+
+
+class MessageRequest:
+    def __init__(self, event: dict):
+        self.event = event
+
+    def parse_message(self):
+        parser = MessageParser(event=self.event)
+        message = parser.parse()
+        return message
 
 
 class MessageController(Controller):
@@ -23,16 +32,6 @@ class MessageController(Controller):
             request = Incoming(member=member, message=message)
 
         request.send()
-
-
-class MessageRequest:
-    def __init__(self, event: dict):
-        self.event = event
-
-    def parse_message(self):
-        parser = MessageParser(event=self.event)
-        message = parser.parse()
-        return message
 
 
 class MessageRegex:
