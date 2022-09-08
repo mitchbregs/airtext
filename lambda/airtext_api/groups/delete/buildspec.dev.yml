@@ -8,7 +8,7 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 312590578399.dkr.ecr.us-east-1.amazonaws.com
   build:
     commands:
-      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-groups-delete-lambda airtext_api/groups/delete/.
+      - docker build --no-cache --build-arg PIP_INDEX_URL=$PIP_INDEX_URL -t dev-airtext-api-groups-delete-lambda lambda/airtext_api/groups/delete/.
       - docker tag dev-airtext-api-groups-delete-lambda:latest 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-groups-delete-lambda:latest
       - docker push 312590578399.dkr.ecr.us-east-1.amazonaws.com/dev-airtext-api-groups-delete-lambda:latest
   post_build:
