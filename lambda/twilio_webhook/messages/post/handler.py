@@ -1,9 +1,9 @@
-"""Message AWS Lambda handler."""
-import json
-import logging
-from typing import Dict
+# """Message AWS Lambda handler."""
+# import json
+# import logging
+# from typing import Dict
 
-from airtext.controllers.twilio_webhooks import MessageController
+# from airtext.controllers.twilio_webhooks import MessageController
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
