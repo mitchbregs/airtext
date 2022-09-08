@@ -1,7 +1,7 @@
 # """Message AWS Lambda handler."""
 # import json
-# import logging
-# from typing import Dict
+import logging
+from typing import Dict
 
 # from airtext.controllers.twilio_webhooks import MessageController
 
@@ -29,14 +29,7 @@ def main(event: Dict, context: Dict) -> None:
         controller.dispatch_request()
     except Exception as e:
         logger.error(e)
-        return {
-            "statusCode": 400,
-            "headers": {
-                "Content-Type": "application/xml",
-            },
-            "body": "<Response/>",
-            "isBase64Encoded": False,
-        }
+        raise e
 
     return {
         "statusCode": 201,
