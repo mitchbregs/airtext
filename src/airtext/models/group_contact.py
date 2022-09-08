@@ -10,8 +10,8 @@ class GroupContact(Base):
     __tablename__ = "group_contacts"
 
     id = Column(INTEGER, primary_key=True)
-    contact_id = Column(INTEGER, nullable=False, ForeignKey("contacts.id"))
-    group_id = Column(INTEGER, nullable=False, ForeignKey("groups.id"))
+    contact_id = Column(INTEGER, ForeignKey("contacts.id"), nullable=False)
+    group_id = Column(INTEGER, ForeignKey("groups.id"), nullable=False)
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
     )

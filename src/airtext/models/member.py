@@ -12,7 +12,7 @@ class Member(Base):
     id = Column(INTEGER, primary_key=True)
     proxy_number = Column(VARCHAR(12))
     name = Column(VARCHAR(36))
-    email = Column(VARCHAR(128), unique=True)
+    email = Column(VARCHAR(128), nullable=False, unique=True)
     number = Column(VARCHAR(12), nullable=False, unique=True)
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
