@@ -25,91 +25,68 @@ FROM @airtext
 🔴 {{ number }} {% if name %}@{{ name }}{% endif -%}
 {% endfor %}
 
-It's likely that these contact names or numbers already exist.
+It's likely that these contact numbers or names already exist.
 {% endif %}
-📝 You can find a contact by using the 'GET' command!
+💡 You can find a contact by using the 'GET' command!
+{% if groups|length > 0 %}
+If you were trying to create a group, use the 'CREATE' command.
+{% endif %}
 """.strip()
     GET_CONTACT: str = \
 """
-
-
+FROM @airtext
+{% if contacts|length > 0 %}
+🔎 Looks like we found {{ contacts|length }} contact(s):
+{% for contact in contacts %}
+🟢 {{ contact['number'] }} {% if contact.get('name') %}@{{ contact.get('name') }}{% endif -%}
+{% endfor %}
+{% endif -%}
+{% set len1 = contact_number_errors|length -%}
+{% set len2 = contact_name_errors|length -%}
+{% if contact_number_errors|length > 0 %}
+🙉 We were not able to find the following {{ len1 + len2 }} contact(s):
+{% for number in contact_number_errors %}
+🔴 {{ number }}
+{% endfor -%}
+{% for name in contact_name_errors %}
+🔴 @{{ number }}
+{% endfor %}
+It seems that probably these contacts do not exist yet.
+{% endif %}
+📝 You can create a contact by using the 'ADD' command!
+{% if groups|length > 0 %}
+If you were trying to list the contacts of a group, use the 'LIST' command.
+{% endif %}
+""".strip()
+    UPDATE_CONTACT: str = \
 """
+FROM @airtext
+{% if contacts|length > 0 %}
+👍 We were able to update {{ contacts|length }} contact(s):
+{% for contact in contacts %}
+🟢 {{ contact['number'] }} @{{ contact['name'] -}}
+{% endfor %}
+{% endif -%}
+{% if contact_errors|length > 0 %}
+🙉 We couldn't update the following {{ contact_errors|length }} contact(s):
+{% for number, name in contact_errors %}
+🔴 {{ number }} {% if name %}@{{ name }}{% endif -%}
+{% endfor %}
 
-"GET"
-    UPDATE: str = "UPDATE"
+It's either these contacts do not exist yet or you did not provide names for numbers.
+
+📙 For example, to update a contact: UPDATE 9086162014 @mitchbregs
+
+📗 You can create a contact by using the 'ADD' command!
+{% endif %}
+{% if groups|length > 0 %}
+If you were trying to create a group, use the 'CREATE' command.
+{% endif %}
+""".strip()
     DELETE: str = "DELETE"
     CREATE: str = "CREATE"
     PUT: str = "PUT"
     REMOVE: str = "REMOVE"
-
-
-
-    # __prehook__ = "FROM @airtext\n\n"
-
-    # AIRTEXT = __prehook__ + "About AIRTEXT..."
-    # ADD_CONTACT = __prehook__ + ("🎉 Added new contact!\n\n{number} @{name}")
-    # ADD_CONTACT_FAIL = __prehook__ + (
-    #     "🤔 Hmmm, we could not add that contact for you. "
-    #     "Are you sure it does not already exist?\n\n"
-    #     "Try GET {number}."
-    # )
-    # GET_CONTACT = __prehook__ + (
-    #     "Found the contact you were looking for! 😎\n\n{number} @{name}"
-    # )
-    # GET_CONTACT_FAIL = __prehook__ + (
-    #     "🥸 We were not able to find that contact for you. "
-    #     "Have you tried adding it?\n\n"
-    #     "Try ADD {number}."
-    # )
-    # UPDATE_CONTACT = __prehook__ + ("✍️ Updated contact.\n\n{number} @{name}")
-    # UPDATE_CONTACT_FAIL = __prehook__ + (
-    #     "Couldn't update contact. Are you sure it exists?\n\n" "Try GET {number}."
-    # )
-    # DELETE_CONTACT = __prehook__ + ("👻 Deleted contact.\n\n{number} @{name}")
-    # DELETE_CONTACT_FAIL = __prehook__ + (
-    #     "😵‍💫 Something went wrong trying to delete that contact. "
-    #     "Perhaps you may have not had it in your contact list.\n\n"
-    #     "Try GET {number}."
-    # )
-    # COMMAND_NOT_FOUND = __prehook__ + (
-    #     "You either did not provide a command 🤔, or the command you "
-    #     "provided is invalid. 🙅\n\n"
-    #     "The accepted commands are as follows:\n"
-    #     "📲 TO\n"
-    #     "📗 ADD\n"
-    #     "🔎 GET\n"
-    #     "🗑 DELETE\n"
-    #     "📝 UPDATE\n"
-    # )
-    # NUMBER_NOT_FOUND = __prehook__ + (
-    #     "The phone number you provided either does not exist or "
-    #     "is not properly formatted. 📵\n\n"
-    #     "Examples of valid phone number formats:\n"
-    #     "⚪️ +19876543210\n"
-    #     "🔴 19876543210\n"
-    #     "🟠 9876543210\n"
-    #     "🟡 +1 (987) 654-3210\n"
-    #     "🟢 1 (987) 654-3210\n"
-    #     "🔵 (987) 654-3210\n"
-    #     "🟣 987.654.3210\n"
-    #     "⚫️ 1.987.654.3210\n"
-    # )
-    # NAME_NOT_FOUND = __prehook__ + (
-    #     "We could not find a name for your contact. 👤\n\n"
-    #     "If you are trying to update a contact, make sure to include their @name.\n\n"
-    #     "For example, UPDATE +19876543210 @JaneDoe."
-    # )
-    # BODY_NOT_FOUND = __prehook__ + (
-    #     "🖇  We could not find any text or content to send.\n\n"
-    #     "If you are sending a message to a contact, make sure to include a body of text or something!"
-    # )
-
-    # ERROR_MESSAGES = {
-    #     "command-not-found": COMMAND_NOT_FOUND,
-    #     "number-not-found": NUMBER_NOT_FOUND,
-    #     "name-not-found": NAME_NOT_FOUND,
-    #     "body-not-found": BODY_NOT_FOUND,
-    # }
 
 
 class Body(object):
@@ -201,23 +178,7 @@ class Outgoing(View):
         return
 
     def run_add_command(self):
-        # ADD 9086162014
-        # ADD 9086162014 @Mitch
-        # ADD 9085152013 @John
-        # ADD 9086162014 @Mitch,9085152013 @John
-        # ADD 9086162014 @Mitch,9085152013
-
-        # CREATE #MyGroup
-        # CREATE #MyGroup
-        # PUT 9086162014 #MyGroup
-        # PUT 9086162014,9085152013 #MyGroup
-        # PUT 9086162014,9085152013 #MyGroup
-
-        # contact_identifier
-
-        # If just a number
-        # if len(self.message.numbers) == 1:
-
+        """Runs an `ADD` command via message controller."""
         tmp = set([x[0] for x in self.message.number_names])
         numbers = list(set(self.message.numbers) - tmp)
         number_names = (
@@ -234,6 +195,14 @@ class Outgoing(View):
                     member_id=self.member.id,
                     name=number_name[1],
                 )
+                group = self.api.groups.get_by_name_and_member_id(
+                    name="all",
+                    member_id=self.member.id,
+                )
+                group_contact = self.api.group_contacts.create(
+                    contact_id=contact.id,
+                    group_id=group.id,
+                )
                 contacts.append(contact.to_dict())
             except Exception as e:
                 contact_errors.append(number_name)
@@ -242,7 +211,8 @@ class Outgoing(View):
             Body(template=BodyTemplates.ADD_CONTACT)
             .format(
                 contacts=contacts,
-                contact_errors=contact_errors
+                contact_errors=contact_errors,
+                groups=self.message.groups,
             )
         )
         message = self.api.messages.create(
@@ -265,40 +235,55 @@ class Outgoing(View):
         return
 
     def run_get_command(self):
-        contact = self.api.contacts.get_by_number_and_member_id(
-            number=self.message.number,
-            member_id=self.member.id,
-        )
 
-        if contact:
-            self.api.messages.create(
-                proxy_number=self.member.proxy_number,
-                to_number=self.member.number,
-                member_id=self.member.id,
-                command=self.message.command,
-                number=self.message.number,
-                name=contact.name,
-                body=OutgoingResponse.GET_CONTACT.format(
-                    number=self.message.number,
-                    name=contact.name,
-                ),
-                error=self.message.error,
-                error_code=self.message.error_code,
+        numbers = set(self.message.numbers)
+        names = set(self.message.names)
+
+        contacts = []
+        contact_number_errors = []
+        for number in numbers:
+            try:
+                contact = self.api.contacts.get_by_number_and_member_id(
+                    number=number,
+                    member_id=self.member.id,
+                )
+                contacts.append(contact.to_dict())
+            except Exception as e:
+                contact_number_errors.append(number)
+
+        contact_name_errors = []
+        for name in names:
+            try:
+                contact = self.api.contacts.get_by_name_and_member_id(
+                    name=name,
+                    member_id=self.member.id,
+                )
+                contacts.append(contact.to_dict())
+            except Exception as e:
+                contact_name_errors.append(name)
+
+        body = (
+            Body(template=BodyTemplates.GET_CONTACT)
+            .format(
+                contacts=contacts,
+                contact_number_errors=contact_number_errors,
+                contact_name_errors=contact_name_errors,
+                groups=self.message.groups,
             )
-
-            return
-
-        self.api.messages.create(
-            proxy_number=self.member.proxy_number,
+        )
+        message = self.api.messages.create(
             to_number=self.member.number,
+            from_number=self.member.proxy_number,
+            body=body,
+            media_url=self.message.media_url,
+            proxy_number=self.member.proxy_number,
             member_id=self.member.id,
             command=self.message.command,
-            number=self.message.number,
-            name=self.message.name,
-            body=OutgoingResponse.GET_CONTACT_FAIL.format(
-                number=self.message.number,
-                name=self.message.name,
-            ),
+            numbers=self.message.numbers,
+            names=self.message.names,
+            number_names=self.message.number_names,
+            groups=self.message.groups,
+            body_content=self.message.body_content,
             error=self.message.error,
             error_code=self.message.error_code,
         )
@@ -306,41 +291,46 @@ class Outgoing(View):
         return
 
     def run_update_command(self):
-        is_updated = self.api.contacts.update_contact(
-            number=self.message.number,
-            name=self.message.name,
-            member_id=self.member.id,
-        )
+        tmp = set([x[0] for x in self.message.number_names])
+        numbers = list(set(self.message.numbers) - tmp)
+        number_nameless = [(number, None) for number in numbers]
 
-        if is_updated:
-            self.api.messages.create(
-                proxy_number=self.member.proxy_number,
-                to_number=self.member.number,
-                member_id=self.member.id,
-                command=self.message.command,
-                number=self.message.number,
-                name=self.message.name,
-                body=OutgoingResponse.UPDATE_CONTACT.format(
-                    number=self.message.number,
-                    name=self.message.name,
-                ),
-                error=self.message.error,
-                error_code=self.message.error_code,
+        contacts = []
+        contact_errors = []
+        for number, name in self.message.number_names:
+            try:
+                contact = self.api.contacts.update(
+                    number=number,
+                    member_id=self.member.id,
+                    name=name,
+                )
+                contacts.append(contact.to_dict())
+            except Exception as e:
+                contact_errors.append((number, name))
+
+        contact_errors += number_nameless
+
+        body = (
+            Body(template=BodyTemplates.UPDATE_CONTACT)
+            .format(
+                contacts=contacts,
+                contact_errors=contact_errors,
+                groups=self.message.groups,
             )
-
-            return
-
-        self.api.messages.create(
-            proxy_number=self.member.proxy_number,
+        )
+        message = self.api.messages.create(
             to_number=self.member.number,
+            from_number=self.member.proxy_number,
+            body=body,
+            media_url=self.message.media_url,
+            proxy_number=self.member.proxy_number,
             member_id=self.member.id,
             command=self.message.command,
-            number=self.message.number,
-            name=self.message.name,
-            body=OutgoingResponse.UPDATE_CONTACT_FAIL.format(
-                number=self.message.number,
-                name=self.message.name,
-            ),
+            numbers=self.message.numbers,
+            names=self.message.names,
+            number_names=self.message.number_names,
+            groups=self.message.groups,
+            body_content=self.message.body_content,
             error=self.message.error,
             error_code=self.message.error_code,
         )
@@ -394,18 +384,19 @@ class Outgoing(View):
         return
 
     def run_error(self, **kwargs):
+        print("-- ERROR --", self.message)
 
-        self.api.messages.create(
-            proxy_number=self.member.proxy_number,
-            to_number=self.member.number,
-            member_id=self.member.id,
-            command=self.message.command,
-            number=self.message.number,
-            name=self.message.name,
-            body=OutgoingResponse.ERROR_MESSAGES[self.message.error_code],
-            error=self.message.error,
-            error_code=self.message.error_code,
-        )
+        # self.api.messages.create(
+        #     proxy_number=self.member.proxy_number,
+        #     to_number=self.member.number,
+        #     member_id=self.member.id,
+        #     command=self.message.command,
+        #     number=self.message.number,
+        #     name=self.message.name,
+        #     body=OutgoingResponse.ERROR_MESSAGES[self.message.error_code],
+        #     error=self.message.error,
+        #     error_code=self.message.error_code,
+        # )
 
         return
 

@@ -32,7 +32,6 @@ class RequestRegex:
     NUMBER = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     NAME = r"(?<=@)(.*?)(?=\,|$|\s+|\:|\;)"
     NUMBER_NAME = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\s+(?=@)(.*?)(?=\,|$|\s+|\:|\;)"
-    NAME_NUMBER = r"(?=@)(.*?)(?=\,|$|\s+|\:|\;)\s+(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
     BODY_CONTENT = r"\n(.*)?"
 
@@ -108,11 +107,11 @@ class RequestParser:
                 error = True
                 error_code = RequestError.NUMBER_NOT_FOUND
         elif command == RequestCommand.GET:
-            if not any([numbers, names, groups]):
+            if not any([numbers, names]):
                 error = True
-                error_code = RequestError.GROUP_NOT_FOUND
+                error_code = RequestError.NUMBER_NOT_FOUND
         elif command == RequestCommand.UPDATE:
-            if not numer_names:
+            if not number_names:
                 error = True
                 error_code = RequestError.NUMBER_NAME_NOT_FOUND
         elif command == RequestCommand.DELETE:
@@ -171,7 +170,7 @@ class RequestParser:
         search = [x.group() for x in pattern.finditer(self.body)]
 
         if not search:
-            return None
+            return []
 
         numbers = []
         for number in search:
@@ -207,26 +206,6 @@ class RequestParser:
         for number_name in search:
             number_name = number_name.strip()
             number, name = number_name.split(" ")
-
-            number = re.sub(r"[^\w]", "", number)
-            if len(number) == 10:
-                number = f"+1{number}"
-            elif len(number) == 11:
-                number = f"+{number}"
-            else:
-                number = None
-
-            name = name.replace("@", "")
-
-            number_name = (number, name)
-            number_names.append(number_name)
-
-        pattern = re.compile(RequestRegex.NAME_NUMBER)
-        search = [x.group() for x in pattern.finditer(self.body)]
-
-        for name_number in search:
-            name_number = number_name.strip()
-            name, number = number_name.split(" ")
 
             number = re.sub(r"[^\w]", "", number)
             if len(number) == 10:
