@@ -13,30 +13,29 @@ class BodyTemplates:
     ADD_CONTACT: str = \
 """
 FROM @airtext
-
-{% if contacts|length > 0 -%}
+{% if contacts|length > 0 %}
 🎉 Nice! Successfully added {{ contacts|length }} new contact(s).
-{% for contact in contacts -%}
-🟢 {{ contact['number'] }} {% if contact.get('name') %}@{{ contact.get('name') }}{% endif %}
-{% endfor -%}
+{% for contact in contacts %}
+🟢 {{ contact['number'] }} {% if contact.get('name') %}@{{ contact.get('name') }}{% endif -%}
+{% endfor %}
 {% endif -%}
+{% if contact_errors|length > 0 %}
+👀 We had issues adding the following {{ contact_errors|length }} contact(s):
+{% for number, name in contact_errors %}
+🔴 {{ number }} {% if name %}@{{ name }}{% endif -%}
+{% endfor %}
 
-{% if contact_errors.get('numbers')|length > 0 or contact_errors.get('number_names')|length > 0 -%}
-👀 Hmm, we had some issues adding the following contacts:
-{% if contact_errors.get('numbers')|length > 0 -%}
-{% for number in contact_errors.get('numbers') -%}
-🔴 {{ number }}
-{% endfor -%}
-{% endif -%}
-{% if contact_errors.get('number_names')|length > 0 -%}
-{% for number, name in contact_errors.get('number_names') -%}
-🔴 {{ number }} @{{ name }}
-{% endfor -%}
-{% endif -%}
-It's likely that these contacts already exist.
-{%- endif -%}
+It's likely that these contact names or numbers already exist.
+{% endif %}
+📝 You can find a contact by using the 'GET' command!
 """.strip()
-    GET_CONTACT: str = "GET"
+    GET_CONTACT: str = \
+"""
+
+
+"""
+
+"GET"
     UPDATE: str = "UPDATE"
     DELETE: str = "DELETE"
     CREATE: str = "CREATE"
@@ -219,19 +218,16 @@ class Outgoing(View):
         # If just a number
         # if len(self.message.numbers) == 1:
 
-        contacts = []
-        contact_errors = {"numbers": [], "number_names": []}
-        for number in self.message.numbers:
-            try:
-                contact = self.api.contacts.create(
-                    number=number,
-                    member_id=self.member.id,
-                )
-                contacts.append(contact.to_dict())
-            except Exception as e:
-                contact_errors["numbers"].append(number)
+        tmp = set([x[0] for x in self.message.number_names])
+        numbers = list(set(self.message.numbers) - tmp)
+        number_names = (
+            self.message.number_names +
+            [(number, None) for number in numbers]
+        )
 
-        for number_name in self.message.number_names:
+        contacts = []
+        contact_errors = []
+        for number_name in number_names:
             try:
                 contact = self.api.contacts.create(
                     number=number_name[0],
@@ -240,7 +236,7 @@ class Outgoing(View):
                 )
                 contacts.append(contact.to_dict())
             except Exception as e:
-                contact_errors["number_names"].append(number_name)
+                contact_errors.append(number_name)
 
         body = (
             Body(template=BodyTemplates.ADD_CONTACT)
@@ -249,11 +245,11 @@ class Outgoing(View):
                 contact_errors=contact_errors
             )
         )
-        self.api.messages.create(
+        message = self.api.messages.create(
             to_number=self.member.number,
-            from_number=self.message.from_number,
-            body_content=self.message.body_content,
-            media_content=self.message.media_content,
+            from_number=self.member.proxy_number,
+            body=body,
+            media_url=self.message.media_url,
             proxy_number=self.member.proxy_number,
             member_id=self.member.id,
             command=self.message.command,
@@ -261,7 +257,7 @@ class Outgoing(View):
             names=self.message.names,
             number_names=self.message.number_names,
             groups=self.message.groups,
-            body=body,
+            body_content=self.message.body_content,
             error=self.message.error,
             error_code=self.message.error_code,
         )

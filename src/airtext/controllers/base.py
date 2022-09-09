@@ -34,7 +34,7 @@ class RequestRegex:
     NUMBER_NAME = r"(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}\s+(?=@)(.*?)(?=\,|$|\s+|\:|\;)"
     NAME_NUMBER = r"(?=@)(.*?)(?=\,|$|\s+|\:|\;)\s+(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
     GROUP = r"(?<=#)(.*?)(?=\,|$|\s+|\:|\;)"
-    BODY = r"\n(.*)?"
+    BODY_CONTENT = r"\n(.*)?"
 
 
 class RequestCommand:
@@ -55,21 +55,21 @@ class RequestError:
     NAME_NOT_FOUND: str = "name-not-found"
     NUMBER_NAME_NOT_FOUND: str = "number-name-not-found"
     GROUP_NOT_FOUND: str = "group-not-found"
-    BODY_NOT_FOUND: str = "body-not-found"
+    BODY_CONTENT_NOT_FOUND: str = "body-not-found"
 
 
 @dataclass
 class RequestParserData:
     to_number: str
     from_number: str
-    body_content: str
-    media_content: str
+    body: str
+    media_url: str
     command: str
     numbers: List[str]
     names: List[str]
     number_names: List[Tuple]
     groups: List[str]
-    body: str
+    body_content: str
     error: bool
     error_code: str
 
@@ -78,9 +78,9 @@ class RequestParser:
     def __init__(self, event: str):
         self.to_number = unquote_plus(event["To"])
         self.from_number = unquote_plus(event["From"])
-        self.body_content = unquote_plus(event["Body"])
-        media_url = event.get("MediaUrl0")  # TODO: Handle multiple
-        self.media_content = unquote_plus(media_url) if media_url else None
+        self.body = unquote_plus(event["Body"])
+        media_content = event.get("MediaUrl0")  # TODO: Handle multiple
+        self.media_url = unquote_plus(media_content) if media_content else None
 
     def parse(self):
         command = self.get_command()
@@ -88,7 +88,7 @@ class RequestParser:
         names = self.get_names()
         number_names = self.get_number_names()
         groups = self.get_groups()
-        body = self.get_body()
+        body_content = self.get_body_content()
         error = False
         error_code = None
 
@@ -102,7 +102,7 @@ class RequestParser:
             # TODO: handle body vs url
             elif not body:
                 error = True
-                error_code = RequestError.BODY_NOT_FOUND
+                error_code = RequestError.BODY_CONTENT_NOT_FOUND
         elif command == RequestCommand.ADD:
             if not any([numbers, names, number_names]):
                 error = True
@@ -144,14 +144,14 @@ class RequestParser:
         return RequestParserData(
             to_number=self.to_number,
             from_number=self.from_number,
-            body_content=self.body_content,
-            media_content=self.media_content,
+            body=self.body,
+            media_url=self.media_url,
             command=command,
             numbers=numbers,
             names=names,
             number_names=number_names,
             groups=groups,
-            body=body,
+            body_content=body_content,
             error=error,
             error_code=error_code,
         )
@@ -159,7 +159,7 @@ class RequestParser:
     def get_command(self):
         """Search for the command."""
         pattern = re.compile(RequestRegex.COMMAND, re.IGNORECASE)
-        search = pattern.search(self.body_content)
+        search = pattern.search(self.body)
 
         command = search.group() if search else None
 
@@ -168,7 +168,7 @@ class RequestParser:
     def get_numbers(self):
         """Search for number."""
         pattern = re.compile(RequestRegex.NUMBER)
-        search = [x.group() for x in pattern.finditer(self.body_content)]
+        search = [x.group() for x in pattern.finditer(self.body)]
 
         if not search:
             return None
@@ -190,7 +190,7 @@ class RequestParser:
 
     def get_names(self):
         pattern = re.compile(RequestRegex.NAME)
-        search = [x.group() for x in pattern.finditer(self.body_content)]
+        search = [x.group() for x in pattern.finditer(self.body)]
 
         names = []
         for name in search:
@@ -201,7 +201,7 @@ class RequestParser:
 
     def get_number_names(self):
         pattern = re.compile(RequestRegex.NUMBER_NAME)
-        search = [x.group() for x in pattern.finditer(self.body_content)]
+        search = [x.group() for x in pattern.finditer(self.body)]
 
         number_names = []
         for number_name in search:
@@ -222,7 +222,7 @@ class RequestParser:
             number_names.append(number_name)
 
         pattern = re.compile(RequestRegex.NAME_NUMBER)
-        search = [x.group() for x in pattern.finditer(self.body_content)]
+        search = [x.group() for x in pattern.finditer(self.body)]
 
         for name_number in search:
             name_number = number_name.strip()
@@ -245,7 +245,7 @@ class RequestParser:
 
     def get_groups(self):
         pattern = re.compile(RequestRegex.GROUP)
-        search = [x.group() for x in pattern.finditer(self.body_content)]
+        search = [x.group() for x in pattern.finditer(self.body)]
 
         groups = []
         for group in search:
@@ -254,10 +254,10 @@ class RequestParser:
 
         return groups
 
-    def get_body(self):
-        pattern = re.compile(RequestRegex.BODY, flags=re.DOTALL)
-        search = pattern.search(self.body_content)
+    def get_body_content(self):
+        pattern = re.compile(RequestRegex.BODY_CONTENT, flags=re.DOTALL)
+        search = pattern.search(self.body)
 
-        body = search.group().strip() if search else None
+        body_content = search.group().strip() if search else None
 
-        return body
+        return body_content

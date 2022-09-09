@@ -17,8 +17,8 @@ class MessageController(Controller):
         member = self.api.members.get_by_proxy_number(proxy_number=message.to_number)
 
         if message.from_number == member.number:
-            request = Outgoing(member=member, message=message)
+            view = Outgoing(member=member, message=message)
         else:
-            request = Incoming(member=member, message=message)
+            view = Incoming(member=member, message=message)
 
-        request.send()
+        view.send()

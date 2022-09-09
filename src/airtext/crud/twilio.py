@@ -17,7 +17,7 @@ class TwilioAPI(TwilioMixin):
     def create_message(
         self, to_number: str, proxy_number: str, body: str, media_url: str
     ):
-        message = self.twilio.messages.create(
+        return self.twilio.messages.create(
             to=to_number,
             from_=proxy_number,
             body=body,
