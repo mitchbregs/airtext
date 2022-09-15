@@ -18,9 +18,10 @@ class Contact(Base):
     )
 
     group_contacts = relationship(
-        "GroupContact",
-        back_populates="contacts",
-        cascade="all,delete"
+        "GroupContact", back_populates="contacts", cascade="all,delete"
     )
 
-    __table_args__ = (UniqueConstraint("number", "member_id"),)
+    __table_args__ = (
+        UniqueConstraint("number", "member_id"),
+        UniqueConstraint("name", "member_id"),
+    )

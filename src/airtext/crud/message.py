@@ -19,13 +19,11 @@ class MessageAPI(DatabaseMixin):
         proxy_number: str,
         member_id: int,
         command: str,
-        numbers: list,
-        names: list,
-        number_names: list,
+        contacts: list,
         groups: list,
         body_content: str,
         error: bool,
-        error_code: str,
+        error_message: str,
     ):
         twilio = TwilioAPI()
         twilio_message = twilio.create_message(
@@ -44,13 +42,11 @@ class MessageAPI(DatabaseMixin):
                 proxy_number=proxy_number,
                 member_id=member_id,
                 command=command,
-                numbers=numbers,
-                names=names,
-                number_names=number_names,
+                contacts=contacts,
                 groups=groups,
                 body_content=body_content,
                 error=error,
-                error_code=error_code,
+                error_message=error_message,
                 twilio_uri=twilio_message.uri,
                 twilio_error_code=twilio_message.error_code,
                 twilio_error_message=twilio_message.error_message,
@@ -101,39 +97,26 @@ class MessageAPI(DatabaseMixin):
                 .filter_by(id=member_id)
                 .scalar_subquery()
             )
-            incoming = (
-                session.query(
-                    Message.created_on.label("created_on"),
-                    Message.number.label("from_number"),
-                    Message.to_number.label("to_number"),
-                    Message.body.label("body"),
-                    Message.media_content.label("media_url"),
-                    literal(True).label("is_incoming"),
-                )
-                .filter_by(
-                    number=number,
-                    to_number=proxy_number
-                )
-            )
-            outgoing = (
-                session.query(
-                    Message.created_on.label("created_on"),
-                    Message.to_number.label("from_number"),
-                    Message.from_number.label("to_number"),
-                    Message.body_content.label("body"),
-                    Message.media_content.label("media_url"),
-                    literal(False).label("is_incoming"),
-                )
-                .filter_by(
-                    from_number=number,
-                    to_number=proxy_number
-                )
-            )
+            incoming = session.query(
+                Message.created_on.label("created_on"),
+                Message.from_number.label("from_number"),
+                Message.to_number.label("to_number"),
+                Message.body.label("body"),
+                Message.media_url.label("media_url"),
+                literal(True).label("is_incoming"),
+            ).filter_by(from_number=number, to_number=proxy_number)
+            outgoing = session.query(
+                Message.created_on.label("created_on"),
+                Message.to_number.label("from_number"),
+                Message.from_number.label("to_number"),
+                Message.body_content.label("body"),
+                Message.media_url.label("media_url"),
+                literal(False).label("is_incoming"),
+            ).filter_by(from_number=proxy_number, to_number=number)
             messages = [
-                dict(x) for x in (
-                    incoming.union(outgoing)
-                    .order_by(asc(Message.created_on))
-                    .all()
+                dict(x)
+                for x in (
+                    incoming.union(outgoing).order_by(asc(Message.created_on)).all()
                 )
             ]
 

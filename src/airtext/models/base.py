@@ -12,4 +12,5 @@ class Base:
     def to_json(self):
         return json.dumps(self.to_dict(), default=str)
 
+
 metadata = Base.metadata

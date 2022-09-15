@@ -1,10 +1,10 @@
 from airtext.api import AirtextAPI
-from airtext.controllers.base import RequestParserData
+from airtext.controllers.base import RequestData
 from airtext.models.member import Member
 
 
 class View:
-    def __init__(self, member: Member, message: RequestParserData):
+    def __init__(self, member: Member, request: RequestData):
         self.member = member
-        self.message = message
+        self.request = request
         self.api = AirtextAPI()

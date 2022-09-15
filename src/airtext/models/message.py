@@ -1,5 +1,5 @@
 from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
-from sqlalchemy.dialects.postgresql import ARRAY, BOOLEAN, INTEGER, TIMESTAMP, VARCHAR
+from sqlalchemy.dialects.postgresql import BOOLEAN, INTEGER, JSON, TIMESTAMP, VARCHAR
 from sqlalchemy.orm import relationship
 
 from airtext.models.base import Base
@@ -17,13 +17,11 @@ class Message(Base):
     proxy_number = Column(VARCHAR(12), nullable=False)
     member_id = Column(INTEGER, ForeignKey("members.id"), nullable=False)
     command = Column(VARCHAR(12))
-    numbers = Column(ARRAY(VARCHAR(12)))
-    names = Column(ARRAY(VARCHAR(36)))
-    number_names = Column(ARRAY(VARCHAR(36)))
-    groups = Column(ARRAY(VARCHAR(36)))
+    contacts = Column(JSON)
+    groups = Column(JSON)
     body_content = Column(VARCHAR(720))
     error = Column(BOOLEAN)
-    error_code = Column(VARCHAR(720))
+    error_message = Column(VARCHAR(720))
 
     twilio_uri = Column(VARCHAR(128), nullable=False)
     twilio_error_code = Column(VARCHAR(128))

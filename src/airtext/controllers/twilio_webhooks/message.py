@@ -4,13 +4,14 @@ from typing import List, Tuple
 from urllib.parse import unquote_plus
 
 from airtext.api import AirtextAPI
-from airtext.controllers.base import Controller, Request
+from airtext.controllers.base import Controller
+from airtext.controllers.twilio_webhooks.request import MessageRequest
 from airtext.views.twilio_webhooks.message import Incoming, Outgoing
 
 
 class MessageController(Controller):
-    def __init__(self, request: Request):
-        super().__init__(request=request)
+    def __init__(self, message: MessageRequest):
+        super().__init__(request=message)
 
     def dispatch_request(self):
         message = self.request.parse_message()

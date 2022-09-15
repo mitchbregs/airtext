@@ -17,6 +17,8 @@ class Group(Base):
     )
 
     members = relationship("Member", back_populates="groups")
-    group_contacts = relationship("GroupContact", back_populates="groups", cascade="all,delete")
+    group_contacts = relationship(
+        "GroupContact", back_populates="groups", cascade="all,delete"
+    )
 
     __table_args__ = (UniqueConstraint("name", "member_id"),)

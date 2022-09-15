@@ -18,18 +18,14 @@ class GroupAPI(DatabaseMixin):
 
     def get_by_member_id(self, member_id: int):
         with self.database() as session:
-            return (
-                session.query(Group)
-                .filter_by(member_id=member_id)
-                .all()
-            )
+            return session.query(Group).filter_by(member_id=member_id).all()
 
     def get_by_name_and_member_id(self, name: str, member_id: int):
         with self.database() as session:
             return (
                 session.query(Group)
                 .filter_by(name=name, member_id=member_id)
-                .one()
+                .first()
             )
 
     def get_by_proxy_number(self, proxy_number: str):
@@ -43,12 +39,8 @@ class GroupAPI(DatabaseMixin):
 
     def delete(self, name: str, member_id: int):
         with self.database() as session:
-            group = (
-                session.query(Group)
-                .filter_by(name=name, member_id=member_id)
-                .one()
-            )
+            group = session.query(Group).filter_by(name=name, member_id=member_id).one()
             session.delete(group)
             session.commit()
 
-        return
+        return group
