@@ -177,8 +177,9 @@ FROM @airtext
 FROM @airtext
 \n🚨 ERROR: {{ error_message }}
 \nThese are all the valid commands:
-\n⚪️ TO: sends a message to contact(s) or group(s)
-\nExample:
+--------------------
+⚪️ TO: sends a message to contact(s) or group(s).
+⚫️
 ```
 TO #all
 Hey dude, whats up?
@@ -188,38 +189,42 @@ or
 TO @mitch,9997774444,#my-group
 Yoooo
 ```
-\n🔴 CREATE: creates contact(s) or group(s)
-\nExample:
+--------------------
+🔴 CREATE: creates contact(s) or group(s).
+⚫️
 ```
 CREATE 9997774444 @some-name, #my-group, 8887776666
 ```
-\n🟠 GET: gets contact(s) or group(s)
-\nExample:
+--------------------
+🟠 GET: gets contact(s) or group(s).
+⚫️
 ```
 GET 9997774444 @some-name, #my-group, 8887776666
 ```
-\n🟡 UPDATE: updates contact(s)
-\nExample:
+--------------------
+🟡 UPDATE: updates contact(s) name.
+⚫️
 ```
 UPDATE 8887776666 @other-name
 ```
-\n🟢 DELETE: deletes contact(s) or group(s)
-\nExample:
+--------------------
+🟢 DELETE: deletes contact(s) or group(s).
+⚫️
 ```
 DELETE 8887776666 @other-name
 ```
 or
+DELETE #my-group
 ```
-UPDATE #my-group
-```
-\n🔵 ADD: adds contact(s) to a single group
-\nExample:
+--------------------
+🔵 ADD: adds contact(s) to a single group.
+⚫️
 ```
 ADD @some-name,8887776666 #my-group
 ```
-\n🟣 REMOVE: removes contact(s) from a single group
-\nExample:
-```
+--------------------
+🟣 REMOVE: removes contact(s) from a single group.
+⚫️
 REMOVE @some-name,8887776666 #my-group
 ```
 """.strip()
@@ -264,8 +269,8 @@ class Incoming(View):
             contacts=json.dumps([dict(x) for x in self.request.contacts]),
             groups=json.dumps([dict(x) for x in self.request.groups]),
             body_content=self.request.body,
-            error=self.request.error,
-            error_message=self.request.error_message,
+            error=False
+            error_message=None,
         )
 
 
