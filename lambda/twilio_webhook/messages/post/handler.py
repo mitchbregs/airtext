@@ -3,8 +3,7 @@ import json
 import logging
 from typing import Dict
 
-from airtext.controllers.base import Request
-from airtext.controllers.twilio_webhooks import MessageController
+from airtext.controllers.twilio_webhooks import MessageController, MessageRequest
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -25,8 +24,8 @@ def main(event: Dict, context: Dict) -> None:
     logger.info(context)
 
     try:
-        request = Request(event=event)
-        controller = MessageController(request=request)
+        message = MessageRequest(event=event)
+        controller = MessageController(message=message)
         controller.dispatch_request()
     except Exception as e:
         logger.error(e)
