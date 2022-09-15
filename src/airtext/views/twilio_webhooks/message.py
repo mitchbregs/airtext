@@ -629,13 +629,14 @@ class Outgoing(View):
         group_contact_errors = []
         for request_contact in self.request.contacts:
             try:
+                # Create contact if not exists
                 contact = self.api.contacts.create_if_not_exists(
                     number=request_contact.number,
                     name=request_contact.name,
                     member_id=self.member.id,
                 )
 
-                # Create contacts on the fly and add to all group
+                # Add to all group if not exists
                 all_group = self.api.groups.get_by_name_and_member_id(
                     name="all",
                     member_id=self.member.id,
