@@ -9,7 +9,7 @@ class TwilioAPI(TwilioMixin):
         phone = self.twilio.incoming_phone_numbers.create(area_code=area_code)
         phone.update(
             sms_method="POST",
-            sms_url="https://z4muss792f.execute-api.us-east-1.amazonaws.com/dev/twilio-webhook",
+            sms_url="https://72cnwtckz5.execute-api.us-east-1.amazonaws.com/v1/message",
         )
 
         return phone
