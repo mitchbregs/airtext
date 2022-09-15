@@ -1,5 +1,4 @@
 """Message AWS Lambda handler."""
-import json
 import logging
 from typing import Dict
 
