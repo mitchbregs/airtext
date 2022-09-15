@@ -177,7 +177,7 @@ FROM @airtext
 FROM @airtext
 \n🚨 ERROR: {{ error_message }}
 \nThese are all the valid commands:
-⚪️ TO: sends a message to contact(s) or group(s)
+\n⚪️ TO: sends a message to contact(s) or group(s)
 \nExample:
 ```
 TO #all
