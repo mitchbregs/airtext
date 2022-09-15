@@ -634,7 +634,18 @@ class Outgoing(View):
                     name=request_contact.name,
                     member_id=self.member.id,
                 )
-                # bug here: need to add to #all if created
+
+                # Create contacts on the fly and add to all group
+                all_group = self.api.groups.get_by_name_and_member_id(
+                    name="all",
+                    member_id=self.member.id,
+                )
+                self.api.group_contacts.create_if_not_exists(
+                    group_id=all_group.id,
+                    contact_id=contact.id,
+                )
+
+                # Create new group contact
                 group_contact = self.api.group_contacts.create(
                     group_id=group.id,
                     contact_id=contact.id,
