@@ -178,12 +178,50 @@ FROM @airtext
 \n🚨 ERROR: {{ error_message }}
 \nThese are all the valid commands:
 ⚪️ TO: sends a message to contact(s) or group(s)
-🔴 CREATE: creates contact(s) or group(s)
-🟠 GET: gets contact(s) or group(s)
-🟡 UPDATE: updates contact(s)
-🟢 DELETE: deletes contact(s) or group(s)
-🔵 ADD: adds contact(s) to a group
-🟣 REMOVE: removes contact(s) from a group
+\nExample:
+```
+TO #all
+Hey dude, whats up?
+```
+or
+```
+TO @mitch,9997774444,#my-group
+Yoooo
+```
+\n🔴 CREATE: creates contact(s) or group(s)
+\nExample:
+```
+CREATE 9997774444 @some-name, #my-group, 8887776666
+```
+\n🟠 GET: gets contact(s) or group(s)
+\nExample:
+```
+GET 9997774444 @some-name, #my-group, 8887776666
+```
+\n🟡 UPDATE: updates contact(s)
+\nExample:
+```
+UPDATE 8887776666 @other-name
+```
+\n🟢 DELETE: deletes contact(s) or group(s)
+\nExample:
+```
+DELETE 8887776666 @other-name
+```
+or
+```
+UPDATE #my-group
+```
+\n🔵 ADD: adds contact(s) to a single group
+\nExample:
+```
+ADD @some-name,8887776666 #my-group
+```
+\n🟣 REMOVE: removes contact(s) from a single group
+\nExample:
+```
+REMOVE @some-name,8887776666 #my-group
+```
 """.strip()
 
 
@@ -238,6 +276,8 @@ class Outgoing(View):
         super().__init__(member=member, request=message)
 
     def run_to_command(self):
+
+        # bug: make it so it works with body
 
         contacts = []
         contact_errors = []
@@ -594,6 +634,7 @@ class Outgoing(View):
                     name=request_contact.name,
                     member_id=self.member.id,
                 )
+                # bug here: need to add to #all if created
                 group_contact = self.api.group_contacts.create(
                     group_id=group.id,
                     contact_id=contact.id,
