@@ -24,3 +24,11 @@ class MemberAPI(DatabaseMixin):
     def get_by_proxy_number(self, proxy_number: str):
         with self.database() as session:
             return session.query(Member).filter_by(proxy_number=proxy_number).one()
+
+    def delete(self, id: int):
+        with self.database() as session:
+            member = session.query(Member).filter_by(id=id).one()
+            session.delete(member)
+            session.commit()
+
+        return member
