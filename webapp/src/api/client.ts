@@ -21,6 +21,9 @@ export const deleteContact = (memberId: number, number: string ) => {
     headers.append('Accept', 'application/json');
     headers.append("Content-Type", "application/json");
 
+    console.log(memberId)
+    console.log(number)
+
     const raw = JSON.stringify({
         "member_id": memberId,
         "number": number

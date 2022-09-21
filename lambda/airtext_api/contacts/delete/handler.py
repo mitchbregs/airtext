@@ -18,9 +18,10 @@ def main(event: Dict, context: Dict) -> None:
     airtext = AirtextAPI()
     number = body["number"]
     member_id = body["member_id"]
+    name = body.get("name")
 
     try:
-        airtext.contacts.delete(number=number, member_id=member_id)
+        airtext.contacts.delete(number=number, member_id=member_id, name=name)
     except Exception as e:
         logger.error(e)
         return {
