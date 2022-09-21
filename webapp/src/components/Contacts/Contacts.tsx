@@ -5,7 +5,7 @@ import { getContacts, IMember, IContact } from '../../api/client';
 import ContactTile from './ContactTile';
 
 const Header = styled('h1')(({}) => ({
-  color: 'white',
+  color: 'black',
   marginTop: '24px',
   marginBottom: '16px',
 }))
@@ -31,7 +31,7 @@ const Contacts = ({ id }: IMember) => {
         <div style={{ height: 400, width: '100%' }}>
           {
             contacts.map((contact) =>
-              <ContactTile id={contact.id} number={contact.number} name={contact.name} />
+              <ContactTile id={contact.id} number={contact.number} name={contact.name} created_on={contact.created_on} />
             )
           }
         </div>

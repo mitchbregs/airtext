@@ -27,6 +27,11 @@ def main(event: Dict, context: Dict) -> None:
             "statusCode": 400,
             "headers": {
                 "Content-Type": "application/json",
+                "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+                "Access-Control-Allow-Methods" : "OPTIONS,GET",
+                "Access-Control-Allow-Credentials" : True,
+                "Access-Control-Allow-Origin" : "*",
+                "X-Requested-With" : "*",
             },
             "body": json.dumps("Unable to retrieve groups."),
             "isBase64Encoded": False,
@@ -36,6 +41,11 @@ def main(event: Dict, context: Dict) -> None:
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
+            "Access-Control-Allow-Headers" : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
+            "Access-Control-Allow-Methods" : "OPTIONS,GET",
+            "Access-Control-Allow-Credentials" : True,
+            "Access-Control-Allow-Origin" : "*",
+            "X-Requested-With" : "*",
         },
         "body": json.dumps(groups, default=str),
         "isBase64Encoded": False,

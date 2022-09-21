@@ -1,5 +1,6 @@
 from airtext.crud.base import DatabaseMixin
 from airtext.models.group import Group
+from airtext.models.group_contact import GroupContact
 from airtext.models.member import Member
 
 
@@ -15,6 +16,14 @@ class GroupAPI(DatabaseMixin):
             session.refresh(group)
 
         return group
+
+    def get_by_group_contacts_contact_id(self, contact_id: int):
+        with self.database() as session:
+            return (
+                session.guery(GroupContact.groups)
+                .filter_by(contact_id=contact_id)
+                .all()
+            )
 
     def get_by_member_id(self, member_id: int):
         with self.database() as session:

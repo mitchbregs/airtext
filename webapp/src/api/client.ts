@@ -15,6 +15,30 @@ export interface IMember {
     created_on?: string;
 };
 
+export const deleteContact = (memberId: number, number: string ) => {
+
+    const headers = new Headers();
+    headers.append('Accept', 'application/json');
+    headers.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+        "member_id": memberId,
+        "number": number
+    });
+
+    const options: RequestInit = {
+        method: 'DELETE',
+        headers: headers,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    const url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/contacts`; 
+
+    return fetch(url, options);
+
+}
+
 export const getContacts = (memberId: number) => {
 
     const headers = new Headers();

@@ -1,24 +1,32 @@
+import { CardHeader, Icon } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { isNamedExports } from 'typescript';
-import { IContact } from '../../api/client'
-import { phoneFormat } from '../../api/helpers';
+import { IContact, deleteContact } from '../../api/client'
+import { contactNameFormat, createdOnDateFormat, phoneFormat } from '../../api/helpers';
 
-const ContactTile = ({ id, number, name }: IContact) => {
+const ContactTile = ({ id, member_id, number, name, created_on }: IContact) => {
 
   return (
-    <Card sx={{ minWidth: 275, marginBottom: '12px' }} variant='outlined'>
+    <Card sx={{ marginBottom: '12px' }} variant='outlined'>
       <CardContent>
-        <Stack direction="row" spacing={1}>
-          <Typography variant="h6" component="div">
-          {phoneFormat(number!)}
+        <Typography variant="h5" component="div">
+          {phoneFormat(number!)}<DeleteIcon onClick={() => deleteContact(member_id!, number!)} sx={{ marginLeft: '12px' }} /><EditIcon sx={{ marginLeft: '12px' }} />
+        </Typography>
+        <Box style={{ marginTop: '16px' }}>
+          {
+            name &&
+            <Chip color="primary" avatar={<Avatar>👤</Avatar>} label={contactNameFormat(name!)} />
+          }
+          <Typography variant="subtitle2" component="div" style={{ marginTop: '16px' }}>
+            {createdOnDateFormat(created_on!)}
           </Typography>
-          {name && <Chip color="default" avatar={<Avatar>@</Avatar>} label={name} />}
-        </Stack>
+        </Box>
       </CardContent>
     </Card>
   );
