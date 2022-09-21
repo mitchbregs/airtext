@@ -123,7 +123,7 @@ const Navigation = ({ id }: IMember) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={member?.name} src="/static/images/avatar/2.jpg" />
+                <Avatar alt={member?.name?.toUpperCase()} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu

@@ -31,7 +31,7 @@ const Contacts = ({ id }: IMember) => {
         <div style={{ height: 400, width: '100%' }}>
           {
             contacts.map((contact) =>
-              <ContactTile id={contact.id} number={contact.number} name={contact.name} created_on={contact.created_on} />
+              <ContactTile key={contact.id} id={contact.id} number={contact.number} name={contact.name} created_on={contact.created_on} />
             )
           }
         </div>
