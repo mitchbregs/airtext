@@ -260,7 +260,7 @@ class Incoming(View):
         )
         self.api.messages.create(
             to_number=self.member.number,
-            from_number=self.member.proxy_number,
+            from_number=number,
             body=body,
             media_url=self.request.media_url,
             proxy_number=self.member.proxy_number,
@@ -269,7 +269,7 @@ class Incoming(View):
             contacts=json.dumps([dict(x) for x in self.request.contacts]),
             groups=json.dumps([dict(x) for x in self.request.groups]),
             body_content=self.request.body,
-            error=False
+            error=False,
             error_message=None,
         )
 
