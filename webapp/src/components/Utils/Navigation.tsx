@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -12,7 +12,7 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
-import { getMember, IMember } from '../../api/client'
+import { IMember } from '../../api/client'
 
 const pages = ['Contacts', 'Groups'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
@@ -24,11 +24,13 @@ const Logo = styled('img')(({}) => ({
   marginRight: '16px',
 }))
 
-const Navigation = ({ id }: IMember) => {
+interface MemberProps {
+  member: IMember;
+}
+
+const Navigation = (props: MemberProps) => {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-  const [member, setMember] = useState<IMember>();
-  const [error, setError] = useState({});
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -44,16 +46,6 @@ const Navigation = ({ id }: IMember) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
-
-  useEffect(() => {
-    getMember(id!)
-      .then((response) => response.json())
-      .then((data) => setMember(data))
-      .catch((error) => setError(error))
-  }, [id]);
-
-  console.log(member)
-  console.log(error)
 
   return (
     <AppBar position="static">
@@ -123,7 +115,7 @@ const Navigation = ({ id }: IMember) => {
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt={member?.name?.toUpperCase()} src="/static/images/avatar/2.jpg" />
+                <Avatar alt={props.member.name.toUpperCase()} src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
             <Menu

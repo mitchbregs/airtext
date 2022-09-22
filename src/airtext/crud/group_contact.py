@@ -1,3 +1,4 @@
+from tokenize import group
 from airtext.crud.base import DatabaseMixin
 from airtext.models.contact import Contact
 from airtext.models.group import Group
@@ -5,6 +6,7 @@ from airtext.models.group_contact import GroupContact
 
 
 class GroupContactAPI(DatabaseMixin):
+
     def create(self, group_id: int, contact_id: int):
         with self.database() as session:
             group_contact = GroupContact(
@@ -37,6 +39,17 @@ class GroupContactAPI(DatabaseMixin):
                 session.refresh(group_contact)
 
         return group_contact
+
+    def get_groups_by_contact_id(self, contact_id: int):
+        with self.database() as session:
+            result = (
+                session.query(GroupContact, Group)
+                .join(Group)
+                .filter(GroupContact.contact_id == contact_id)
+                .limit(5)
+                .all()
+            )
+            return [row[1] for row in result]
 
     def get_by_group_id(self, group_id: int):
         with self.database() as session:

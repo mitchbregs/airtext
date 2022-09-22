@@ -1,82 +1,111 @@
 export interface IContact {
-    id?: number;
-    name?: string;
-    number?: string;
-    member_id?: number;
-    created_on?: string;
+    id: number;
+    name: string;
+    number: string;
+    member_id: number;
+    created_on: string;
 };
 
 export interface IMember {
-    id?: number;
-    proxy_number?: string;
-    name?: string;
-    email?: string;
-    number?: string;
-    created_on?: string;
+    id: number;
+    proxy_number: string;
+    name: string;
+    email: string;
+    number: string;
+    created_on: string;
 };
 
-export const deleteContact = (memberId: number, number: string ) => {
+export interface ContactProps {
+    contact: IContact
+};
 
-    const headers = new Headers();
+export const addContact = (member_id: number, number: string, name: string | null) => {
+
+    let headers = new Headers();
     headers.append('Accept', 'application/json');
     headers.append("Content-Type", "application/json");
 
-    console.log(memberId)
-    console.log(number)
-
-    const raw = JSON.stringify({
-        "member_id": memberId,
-        "number": number
+    let raw = JSON.stringify({
+        "number": number,
+        "member_id": member_id,
+        "name": name,
     });
 
-    const options: RequestInit = {
+    let options: RequestInit = {
+        method: 'POST',
+        headers: headers,
+        body: raw,
+        redirect: 'follow'
+    };
+
+    let url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/contacts`; 
+
+    return fetch(url, options);
+  
+};
+
+export const getContacts = (member_id: number) => {
+
+    let headers = new Headers();
+    headers.append('Accept', 'application/json');
+
+    let queryParams = new URLSearchParams();
+    queryParams.append('member_id', member_id.toString());
+
+    let options: RequestInit = {
+        method: 'GET',
+        headers: headers,
+        redirect: 'follow'
+    };
+
+    let url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/contacts?${queryParams}`; 
+
+    return fetch(url, options);
+  
+};
+
+export const deleteContact = (member_id: number, number: string) => {
+
+    let headers = new Headers();
+    headers.append('Accept', 'application/json');
+    headers.append("Content-Type", "application/json");
+
+    console.log(member_id)
+    console.log(number)
+
+    let raw = JSON.stringify({
+        "number": number,
+        "member_id": member_id,
+    });
+
+    let options: RequestInit = {
         method: 'DELETE',
         headers: headers,
         body: raw,
         redirect: 'follow'
     };
 
-    const url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/contacts`; 
+    let url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/contacts`; 
 
     return fetch(url, options);
 
 }
 
-export const getContacts = (memberId: number) => {
+export const getMember = (member_id: number) => {
 
-    const headers = new Headers();
+    let headers = new Headers();
     headers.append('Accept', 'application/json');
 
-    const queryParams = new URLSearchParams();
-    queryParams.append('member_id', memberId.toString());
+    let queryParams = new URLSearchParams();
+    queryParams.append('id', member_id.toString());
 
-    const options: RequestInit = {
+    let options: RequestInit = {
         method: 'GET',
         headers: headers,
         redirect: 'follow'
     };
 
-    const url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/contacts?${queryParams}`; 
-
-    return fetch(url, options);
-  
-};
-
-export const getMember = (memberId: number) => {
-
-    const headers = new Headers();
-    headers.append('Accept', 'application/json');
-
-    const queryParams = new URLSearchParams();
-    queryParams.append('id', memberId.toString());
-
-    const options: RequestInit = {
-        method: 'GET',
-        headers: headers,
-        redirect: 'follow'
-    };
-
-    const url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/members?${queryParams}`; 
+    let url = `https://z4muss792f.execute-api.us-east-1.amazonaws.com/v1/members?${queryParams}`; 
 
     return fetch(url, options);
   

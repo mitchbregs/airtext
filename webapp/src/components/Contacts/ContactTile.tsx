@@ -10,21 +10,33 @@ import Typography from '@mui/material/Typography';
 import { IContact, deleteContact } from '../../api/client'
 import { contactNameFormat, createdOnDateFormat, phoneFormat } from '../../api/helpers';
 
-const ContactTile = ({ id, member_id, number, name, created_on }: IContact) => {
+interface ContactTileProps {
+  contact: IContact;
+  stateChange: Function,
+}
+
+const ContactTile = (props: ContactTileProps) => {
+
+  function runDeleteContact(contact_id: number, member_id: number, number: string, stateChange: Function) {
+    deleteContact(member_id, number)
+      .then(response => response.json())
+      .then(data => stateChange(contact_id))
+      .catch(error => console.log(error));
+  }
 
   return (
     <Card sx={{ marginBottom: '12px' }} variant='outlined'>
       <CardContent>
         <Typography variant="h5" component="div">
-          {phoneFormat(number!)}<DeleteIcon onClick={() => deleteContact(member_id!, number!)} sx={{ marginLeft: '12px' }} /><EditIcon sx={{ marginLeft: '12px' }} />
+          {phoneFormat(props.contact.number)}<DeleteIcon onClick={() => runDeleteContact(props.contact.id, props.contact.member_id, props.contact.number, props.stateChange)} sx={{ marginLeft: '12px' }} /><EditIcon sx={{ marginLeft: '12px' }} />
         </Typography>
         <Box style={{ marginTop: '16px' }}>
           {
-            name &&
-            <Chip color="primary" avatar={<Avatar>👤</Avatar>} label={contactNameFormat(name!)} />
+            props.contact.name &&
+            <Chip color="primary" avatar={<Avatar>👤</Avatar>} label={contactNameFormat(props.contact.name)} />
           }
           <Typography variant="subtitle2" component="div" style={{ marginTop: '16px' }}>
-            {createdOnDateFormat(created_on!)}
+            {createdOnDateFormat(props.contact.created_on)}
           </Typography>
         </Box>
       </CardContent>
