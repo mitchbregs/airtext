@@ -17,14 +17,14 @@ if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
 # SQLAlchemy config
-config.set_main_option("sqlalchemy.url", os.getenv("MESSAGES_DATABASE_URL"))
+config.set_main_option("sqlalchemy.url", os.getenv("AIRTEXT_DATABASE_URL"))
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from airtext.models import Base
-target_metadata = Base.metadata
+from airtext.models.base import BaseModel
+target_metadata = BaseModel.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

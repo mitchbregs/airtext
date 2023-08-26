@@ -5,7 +5,7 @@ from sqlalchemy.ext.declarative import as_declarative
 
 
 @as_declarative()
-class Base:
+class BaseModel:
     def to_dict(self):
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
@@ -13,4 +13,4 @@ class Base:
         return json.dumps(self.to_dict(), default=str)
 
 
-metadata = Base.metadata
+metadata = BaseModel.metadata

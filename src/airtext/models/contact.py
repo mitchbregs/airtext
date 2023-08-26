@@ -1,27 +1,20 @@
-from sqlalchemy import Column, ForeignKey, UniqueConstraint, text
-from sqlalchemy.dialects.postgresql import INTEGER, TIMESTAMP, VARCHAR
-from sqlalchemy.orm import relationship
+import uuid
 
-from airtext.models.base import Base
+from sqlalchemy import Column, ForeignKey, text
+from sqlalchemy.dialects.postgresql import TIMESTAMP, VARCHAR, UUID
+
+from airtext.models.base import BaseModel
 
 
-class Contact(Base):
+class Contact(BaseModel):
 
     __tablename__ = "contacts"
 
-    id = Column(INTEGER, primary_key=True)
-    name = Column(VARCHAR(36))
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    member_id = Column(UUID(as_uuid=True), ForeignKey("members.id"), nullable=False)
     number = Column(VARCHAR(12), nullable=False)
-    member_id = Column(INTEGER, ForeignKey("members.id"), nullable=False)
+    first_name = Column(VARCHAR(36))
+    last_name = Column(VARCHAR(36))
     created_on = Column(
         TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP")
-    )
-
-    group_contacts = relationship(
-        "GroupContact", back_populates="contacts", cascade="all,delete"
-    )
-
-    __table_args__ = (
-        UniqueConstraint("number", "member_id"),
-        UniqueConstraint("name", "member_id"),
     )

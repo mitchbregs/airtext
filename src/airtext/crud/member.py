@@ -3,13 +3,13 @@ from airtext.models.member import Member
 
 
 class MemberAPI(DatabaseMixin):
-    def create(self, proxy_number: str, name: str, email: str, number: str):
+    def create(self, first_name: str, last_name: str, email: str, phone_number: str):
         with self.database() as session:
             member = Member(
-                proxy_number=proxy_number,
-                name=name,
+                first_name=first_name,
+                last_name=last_name,
                 email=email,
-                number=number,
+                phone_number=phone_number,
             )
             session.add(member)
             session.commit()
@@ -21,11 +21,15 @@ class MemberAPI(DatabaseMixin):
         with self.database() as session:
             return session.query(Member).filter_by(id=id).one()
 
-    def get_by_proxy_number(self, proxy_number: str):
+    def get_by_email(self, email: str):
         with self.database() as session:
-            return session.query(Member).filter_by(proxy_number=proxy_number).one()
+            return session.query(Member).filter_by(email=email).one()
 
-    def delete(self, id: int):
+    def get_by_phone_number(self, phone_number: str):
+        with self.database() as session:
+            return session.query(Member).filter_by(phone_number=phone_number).one()
+
+    def delete(self, phone_number: int):
         with self.database() as session:
             member = session.query(Member).filter_by(id=id).one()
             session.delete(member)
