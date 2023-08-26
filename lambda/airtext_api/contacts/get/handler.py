@@ -19,8 +19,8 @@ def main(event: Dict, context: Dict) -> None:
     member_id = params["member_id"]
 
     try:
-        result_contacts = airtext.contacts.get_by_member_id(member_id=member_id)
-        contacts = [row.to_dict() for row in result_contacts]
+        result = airtext.contacts.get_by_member_id(member_id=member_id)
+        contacts = [row.to_dict() for row in result]
     except Exception as e:
         logger.error(e)
         return {
@@ -37,6 +37,7 @@ def main(event: Dict, context: Dict) -> None:
             "isBase64Encoded": False,
         }
 
+    return {
         "statusCode": 200,
         "headers": {
             "Content-Type": "application/json",
