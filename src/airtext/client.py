@@ -5,7 +5,7 @@ from airtext.crud.member import MemberAPI
 from airtext.crud.message import MessageAPI
 
 
-class AirtextAPI:
+class Airtext:
 
     def __init__(self):
         self.contacts = ContactAPI()

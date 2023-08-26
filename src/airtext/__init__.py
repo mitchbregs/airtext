@@ -1,5 +1,5 @@
-from .api import AirtextAPI
+from .client import Airtext
 
 __all__ = [
-    "AirtextAPI",
+    "Airtext",
 ]

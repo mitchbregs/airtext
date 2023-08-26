@@ -28,7 +28,35 @@ class GroupContactAPI(DatabaseMixin):
                 .all()
             )
 
-    def delete(self, group_id: int, contact_id: int):
+    def delete_by_contact_id(self, contact_id: str):
+        with self.database() as session:
+            group_contacts = (
+                session.query(GroupContact)
+                .filter_by(
+                    contact_id=contact_id,
+                )
+                .all()
+            )
+            session.delete(group_contacts)
+            session.commit()
+
+        return
+
+    def delete_by_group(self, group_id: str):
+        with self.database() as session:
+            group_contacts = (
+                session.query(GroupContact)
+                .filter_by(
+                    group_id=group_id,
+                )
+                .all()
+            )
+            session.delete(group_contacts)
+            session.commit()
+
+        return
+
+    def delete(self, group_id: str, contact_id: str):
         with self.database() as session:
             group_contact = (
                 session.query(GroupContact)

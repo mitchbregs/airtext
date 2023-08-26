@@ -1,0 +1,2 @@
+export CODEARTIFACT_AUTH_TOKEN=`aws codeartifact get-authorization-token --domain airtext-pypi --domain-owner 312590578399 --query authorizationToken --output text`
+pip config set site.index-url https://aws:$CODEARTIFACT_AUTH_TOKEN@@airtext-pypi-312590578399.d.codeartifact.us-east-1.amazonaws.com/pypi/airtext-pypi-store/simple/

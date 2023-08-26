@@ -2,7 +2,7 @@ import json
 import logging
 from typing import Dict
 
-from airtext.api import AirtextAPI
+from airtext import Airtext
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -15,13 +15,12 @@ def main(event: Dict, context: Dict) -> None:
 
     body = json.loads(event["body"])
 
-    airtext = AirtextAPI()
-    number = body["number"]
-    member_id = body["member_id"]
-    name = body.get("name")
+    airtext = Airtext()
+    contact_id = body["contact_id"]
 
     try:
-        airtext.contacts.delete(number=number, member_id=member_id, name=name)
+        airtext.group_contacts.delete_by_contact_id(contact_id=contact_id)
+        airtext.contacts.delete(contact_id=contact_id)
     except Exception as e:
         logger.error(e)
         return {
