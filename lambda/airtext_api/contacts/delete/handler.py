@@ -20,7 +20,7 @@ def main(event: Dict, context: Dict) -> None:
 
     try:
         airtext.group_contacts.delete_by_contact_id(contact_id=contact_id)
-        airtext.contacts.delete(contact_id=contact_id)
+        airtext.contacts.delete(id=contact_id)
     except Exception as e:
         logger.error(e)
         return {
