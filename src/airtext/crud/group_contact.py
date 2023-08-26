@@ -37,7 +37,10 @@ class GroupContactAPI(DatabaseMixin):
                 )
                 .all()
             )
-            session.delete(group_contacts)
+
+            for group_contact in group_contacts:
+                session.delete(group_contact)
+
             session.commit()
 
         return
@@ -51,7 +54,10 @@ class GroupContactAPI(DatabaseMixin):
                 )
                 .all()
             )
-            session.delete(group_contacts)
+
+            for group_contact in group_contacts:
+                session.delete(group_contact)
+
             session.commit()
 
         return
